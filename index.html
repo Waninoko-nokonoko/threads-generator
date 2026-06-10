@@ -283,6 +283,46 @@
       color: #22c55e;
     }
 
+    .thread-post {
+      border-left: 2px solid #333;
+      padding: 14px 16px;
+      margin: 12px 0;
+      background: #111;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .thread-label {
+      font-size: 11px;
+      color: #a855f7;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .copy-all-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px;
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid #a855f7;
+      border-radius: 8px;
+      color: #a855f7;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-all-btn:hover {
+      background: rgba(168, 85, 247, 0.2);
+    }
+
+    .copy-all-btn.copied {
+      border-color: #22c55e;
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+
     .error-box {
       display: none;
       background: rgba(239, 68, 68, 0.1);
@@ -470,26 +510,50 @@
       const results = document.getElementById('results');
       const patterns = text.split('---').filter(p => p.trim());
 
-      results.innerHTML = '<div class="card"><h2>🚀 生成された投稿文</h2></div>';
+      results.innerHTML = '<div class="card"><h2>🚀 生成されたスレッド投稿</h2></div>';
 
-      patterns.forEach((pattern, i) => {
+      patterns.forEach((pattern) => {
         const lines = pattern.trim().split('\n');
-        const titleLine = lines.find(l => l.startsWith('【')) || `パターン ${i + 1}`;
-        const bodyLines = lines.filter(l => !l.startsWith('【'));
-        const body = bodyLines.join('\n').trim();
+        const titleLine = lines.find(l => l.startsWith('【')) || '';
+        if (!titleLine) return;
 
-        if (!body) return;
+        // ▼ 投稿N で分割
+        const posts = pattern.split(/▼\s*投稿\d+[^\n]*\n/).filter(p => p.trim());
+        const title = titleLine.replace(/【|】/g, '').trim();
 
-        const div = document.createElement('div');
-        div.className = 'result-pattern';
-        div.innerHTML = `
-          <h3>${escapeHtml(titleLine.replace(/【|】/g, ''))}</h3>
-          <div class="result-text">${escapeHtml(body)}</div>
-          <button class="copy-btn">📋 コピー</button>
-        `;
-        const btn = div.querySelector('.copy-btn');
-        btn.addEventListener('click', () => copyText(btn, body));
-        results.appendChild(div);
+        const patternDiv = document.createElement('div');
+        patternDiv.className = 'result-pattern';
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = title;
+        patternDiv.appendChild(titleEl);
+
+        const allText = posts.join('\n\n').trim();
+
+        posts.forEach((post, idx) => {
+          const postText = post.trim();
+          if (!postText || postText.startsWith('【')) return;
+
+          const postDiv = document.createElement('div');
+          postDiv.className = 'thread-post';
+          postDiv.innerHTML = `
+            <div class="thread-label">投稿 ${idx + 1}</div>
+            <div class="result-text">${escapeHtml(postText)}</div>
+            <button class="copy-btn">📋 コピー</button>
+          `;
+          const btn = postDiv.querySelector('.copy-btn');
+          btn.addEventListener('click', () => copyText(btn, postText));
+          patternDiv.appendChild(postDiv);
+        });
+
+        // まとめてコピーボタン
+        const allBtn = document.createElement('button');
+        allBtn.className = 'copy-all-btn';
+        allBtn.textContent = '📋 全投稿をまとめてコピー';
+        allBtn.addEventListener('click', () => copyText(allBtn, allText));
+        patternDiv.appendChild(allBtn);
+
+        results.appendChild(patternDiv);
       });
 
       results.classList.add('show');
