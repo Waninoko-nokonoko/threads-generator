@@ -348,18 +348,28 @@
       }
     }
 
+    function parseSection(text, name) {
+      const re = new RegExp(`===\\s*${name}\\s*===\\n([\\s\\S]*?)(?====|$)`);
+      const m = text.match(re);
+      return m ? m[1].trim() : '';
+    }
+
     function renderResults(text) {
       const results = document.getElementById('results');
       results.innerHTML = '';
 
-      // 件名を抽出
-      const subjectMatches = [...text.matchAll(/【件名案\d+】\n([^\n\[]+)/g)];
-      if (subjectMatches.length > 0) {
+      // 件名
+      const subjects = [
+        parseSection(text, '件名1'),
+        parseSection(text, '件名2'),
+        parseSection(text, '件名3'),
+      ].filter(s => s);
+
+      if (subjects.length > 0) {
         const card = document.createElement('div');
         card.className = 'subjects-card';
         card.innerHTML = '<h2>✉ 件名案（3パターン）</h2>';
-        subjectMatches.forEach((m, i) => {
-          const subject = m[1].trim();
+        subjects.forEach(subject => {
           const item = document.createElement('div');
           item.className = 'subject-item';
           item.innerHTML = `
@@ -372,10 +382,9 @@
         results.appendChild(card);
       }
 
-      // 本文を抽出
-      const bodyMatch = text.match(/【本文】\n([\s\S]+?)(?=\n---|\n【改善)/);
-      if (bodyMatch) {
-        const body = bodyMatch[1].trim();
+      // 本文
+      const body = parseSection(text, '本文');
+      if (body) {
         const card = document.createElement('div');
         card.className = 'body-card';
         card.innerHTML = `
@@ -386,10 +395,9 @@
         results.appendChild(card);
       }
 
-      // 改善ポイントを抽出
-      const insightMatch = text.match(/【改善ポイント】\n([\s\S]+?)(?=\n---|$)/);
-      if (insightMatch) {
-        const insight = insightMatch[1].trim();
+      // 改善ポイント
+      const insight = parseSection(text, '改善ポイント');
+      if (insight) {
         const card = document.createElement('div');
         card.className = 'insight-card';
         card.innerHTML = `
