@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOEGI メルマガジェネレーター</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .container { max-width: 680px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 40px; }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #d4a843, #e8c96b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p { color: #888; font-size: 14px; }
+
+    .insight {
+      background: rgba(212, 168, 67, 0.08);
+      border: 1px solid rgba(212, 168, 67, 0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #d4a843;
+      line-height: 1.7;
+    }
+
+    .insight strong { display: block; margin-bottom: 6px; font-size: 14px; }
+
+    .card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #f0f0f0;
+      font-size: 14px;
+      padding: 12px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #d4a843;
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .generate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #d4a843, #c49030);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+
+    .generate-btn:hover { opacity: 0.9; }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .loading { display: none; text-align: center; padding: 40px; color: #888; }
+    .loading.show { display: block; }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #2a2a2a;
+      border-top-color: #d4a843;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results { display: none; }
+    .results.show { display: block; }
+
+    .subjects-card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .subjects-card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    .subject-item {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .subject-text {
+      font-size: 15px;
+      color: #f0f0f0;
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .copy-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #888;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover { border-color: #d4a843; color: #d4a843; }
+    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
+
+    .body-card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .body-card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .body-text {
+      font-size: 15px;
+      line-height: 2;
+      color: #e8e8e8;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #111;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .insight-card {
+      background: rgba(212, 168, 67, 0.05);
+      border: 1px solid rgba(212, 168, 67, 0.15);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+
+    .insight-card h3 {
+      font-size: 14px;
+      color: #d4a843;
+      margin-bottom: 12px;
+    }
+
+    .insight-card p {
+      font-size: 14px;
+      color: #bbb;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 14px;
+      color: #f87171;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .error-box.show { display: block; }
+
+    .nav {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .nav a {
+      color: #555;
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav a:hover { color: #d4a843; border-color: #d4a843; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="/">← Threadsジェネレーターに戻る</a>
+    </div>
+
+    <header>
+      <h1>✉ MOEGI メルマガジェネレーター</h1>
+      <p>過去データを学習済み。売れるメルマガを自動生成</p>
+    </header>
+
+    <div class="insight">
+      <strong>📊 あなたのデータから学んだこと</strong>
+      購入につながった共通点：<b>期限・限定感</b>＋<b>具体的な体験・変化</b><br>
+      CTR高いのに購入0の原因：「今買う理由」が弱い → このアプリが自動で補完します
+    </div>
+
+    <div class="card">
+      <h2>📝 メルマガの内容を入力</h2>
+
+      <label>テーマ・伝えたいこと <span style="color:#f87171">*</span></label>
+      <textarea id="theme" placeholder="例：夏の紫外線ダメージケアにMOEGIを紹介したい&#10;例：定期購入の特典を改めてアピールしたい&#10;例：梅雨時期の体のだるさ・むくみ対策"></textarea>
+
+      <div class="row">
+        <div>
+          <label>緊急性・期限（あれば）</label>
+          <input type="text" id="urgency" placeholder="例：6月末まで10%OFF、在庫残りわずか">
+        </div>
+        <div>
+          <label>季節・時期の背景</label>
+          <input type="text" id="season" placeholder="例：梅雨入り、夏前の体づくり">
+        </div>
+      </div>
+
+      <label>追加情報（体験談・キャンペーン詳細など）</label>
+      <textarea id="extra" placeholder="例：先月、お客様から「飲み始めて2週間で体が軽くなった」という声をいただいた&#10;例：今回はケストースを一緒に紹介したい"></textarea>
+    </div>
+
+    <button class="generate-btn" onclick="generate()">✨ メルマガを生成する</button>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>過去データを分析して売れる文章を生成中...</p>
+    </div>
+
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    async function generate() {
+      const errorBox = document.getElementById('errorBox');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const btn = document.querySelector('.generate-btn');
+
+      errorBox.classList.remove('show');
+      results.classList.remove('show');
+
+      const theme = document.getElementById('theme').value.trim();
+      if (!theme) {
+        errorBox.textContent = 'テーマを入力してください';
+        errorBox.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      loading.classList.add('show');
+
+      try {
+        const res = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            theme,
+            urgency: document.getElementById('urgency').value.trim(),
+            season: document.getElementById('season').value.trim(),
+            extra: document.getElementById('extra').value.trim(),
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '生成に失敗しました');
+
+        renderResults(data.result);
+      } catch (err) {
+        errorBox.textContent = `エラー: ${err.message}`;
+        errorBox.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        loading.classList.remove('show');
+      }
+    }
+
+    function renderResults(text) {
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      // 件名を抽出
+      const subjectMatches = [...text.matchAll(/【件名案\d+】\n([^\n\[]+)/g)];
+      if (subjectMatches.length > 0) {
+        const card = document.createElement('div');
+        card.className = 'subjects-card';
+        card.innerHTML = '<h2>✉ 件名案（3パターン）</h2>';
+        subjectMatches.forEach((m, i) => {
+          const subject = m[1].trim();
+          const item = document.createElement('div');
+          item.className = 'subject-item';
+          item.innerHTML = `
+            <span class="subject-text">${escapeHtml(subject)}</span>
+            <button class="copy-btn">コピー</button>
+          `;
+          item.querySelector('.copy-btn').addEventListener('click', (e) => copyText(e.target, subject));
+          card.appendChild(item);
+        });
+        results.appendChild(card);
+      }
+
+      // 本文を抽出
+      const bodyMatch = text.match(/【本文】\n([\s\S]+?)(?=\n---|\n【改善)/);
+      if (bodyMatch) {
+        const body = bodyMatch[1].trim();
+        const card = document.createElement('div');
+        card.className = 'body-card';
+        card.innerHTML = `
+          <h2>📄 本文 <button class="copy-btn" id="copyBodyBtn">📋 全文コピー</button></h2>
+          <div class="body-text">${escapeHtml(body)}</div>
+        `;
+        card.querySelector('#copyBodyBtn').addEventListener('click', (e) => copyText(e.target, body));
+        results.appendChild(card);
+      }
+
+      // 改善ポイントを抽出
+      const insightMatch = text.match(/【改善ポイント】\n([\s\S]+?)(?=\n---|$)/);
+      if (insightMatch) {
+        const insight = insightMatch[1].trim();
+        const card = document.createElement('div');
+        card.className = 'insight-card';
+        card.innerHTML = `
+          <h3>💡 なぜこのメルマガが売れるのか</h3>
+          <p>${escapeHtml(insight)}</p>
+        `;
+        results.appendChild(card);
+      }
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ コピー済み';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  </script>
+</body>
+</html>
