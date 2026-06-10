@@ -90,7 +90,7 @@ Threadsでは「連続投稿（スレッド）」形式が最もバズりやす�
 各投稿は独立して読めるが、つながって読むと完結する構成にする。
 
 ## 指示
-添付されたInstagram投稿画像（${images.length}枚）の内容を分析し、Threadsでバズるスレッド形式の投稿を2パターン作成してください。
+添付されたInstagram投稿画像（${images.length}枚）の内容を分析し、Threadsでバズるスレッド形式の投稿を3パターン作成してください。
 
 ### 条件
 - トーン：${toneMap[tone] || toneMap.casual}
