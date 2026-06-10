@@ -145,14 +145,15 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { brand, series, postType, theme, extra } = req.body;
+    const { brand, theme, extra, images } = req.body;
 
     if (!theme) return res.status(400).json({ error: 'テーマを入力してください' });
 
     const brandInfo = brand === 'moegi' ? MOEGI_BRAND : DRWU_BRAND;
     const brandName = brand === 'moegi' ? 'MOEGI' : 'DR.WU';
-    const seriesInfo = series ? `シリーズ：${series}` : '';
-    const postTypeInfo = postType ? `投稿タイプ：${postType}` : '';
+    const imageNote = images && images.length > 0
+      ? `- 参考画像：${images.length}枚添付（商品情報・成分・参考資料として活用すること）`
+      : '';
 
     const prompt = `あなたはInstagramカルーセル投稿の専門家です。
 
@@ -164,10 +165,9 @@ ${DESIGN_PROMPT_RULES}
 
 ## 今回の依頼
 - ブランド：${brandName}
-- ${seriesInfo}
-- ${postTypeInfo}
 - テーマ：${theme}
 - 追加情報：${extra || 'なし'}
+${imageNote}
 
 ## 出力指示
 3パターンのカルーセル投稿を作成する。各パターンは異なるアプローチで。
@@ -257,6 +257,16 @@ ${DESIGN_PROMPT_RULES}
 【スライドデザイン指示】
 （統一感のあるスライドデザインのChatGPTプロンプト）`;
 
+    const imageContents = (images || []).map(({ base64, mediaType }) => ({
+      type: 'image',
+      source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: base64 },
+    }));
+
+    const messageContent = [
+      ...imageContents,
+      { type: 'text', text: prompt },
+    ];
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -267,7 +277,7 @@ ${DESIGN_PROMPT_RULES}
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 5000,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: 'user', content: messageContent }],
       }),
     });
 

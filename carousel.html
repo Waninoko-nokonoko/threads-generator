@@ -18,167 +18,106 @@
     .container { max-width: 760px; margin: 0 auto; }
 
     header { text-align: center; margin-bottom: 36px; }
-
-    header h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #f0f0f0;
-      margin-bottom: 8px;
-    }
-
+    header h1 { font-size: 26px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; }
     header p { color: #666; font-size: 14px; }
 
     .nav { text-align: center; margin-bottom: 28px; }
     .nav a {
-      color: #555;
-      text-decoration: none;
-      font-size: 13px;
-      padding: 6px 14px;
-      border: 1px solid #2a2a2a;
-      border-radius: 20px;
-      transition: all 0.2s;
-      margin: 0 4px;
+      color: #555; text-decoration: none; font-size: 13px;
+      padding: 6px 14px; border: 1px solid #2a2a2a; border-radius: 20px;
+      transition: all 0.2s; margin: 0 4px;
     }
     .nav a:hover { color: #aaa; border-color: #555; }
 
-    /* ブランド選択 */
-    .brand-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+    .brand-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 
     .brand-btn {
-      padding: 16px;
-      border: 2px solid #2a2a2a;
-      border-radius: 14px;
-      background: #161616;
-      color: #888;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-      text-align: center;
+      padding: 16px; border: 2px solid #2a2a2a; border-radius: 14px;
+      background: #161616; color: #888; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; font-family: inherit; text-align: center;
     }
-
     .brand-btn:hover { border-color: #555; color: #ccc; }
-    .brand-btn.active.moegi { border-color: #6db36d; color: #6db36d; background: rgba(109,179,109,0.08); }
     .brand-btn.active.drwu { border-color: #5b9bd5; color: #5b9bd5; background: rgba(91,155,213,0.08); }
-
+    .brand-btn.active.moegi { border-color: #6db36d; color: #6db36d; background: rgba(109,179,109,0.08); }
     .brand-btn small { display: block; font-size: 11px; font-weight: 400; margin-top: 4px; opacity: 0.7; }
 
-    .card {
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-
+    .card { background: #161616; border: 1px solid #2a2a2a; border-radius: 16px; padding: 24px; margin-bottom: 16px; }
     .card h2 { font-size: 15px; font-weight: 600; color: #ccc; margin-bottom: 16px; }
 
     label { display: block; font-size: 13px; color: #777; margin-bottom: 6px; }
 
-    input[type="text"], textarea, select {
-      width: 100%;
-      background: #1e1e1e;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      color: #f0f0f0;
-      font-size: 14px;
-      padding: 11px 14px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-      margin-bottom: 14px;
+    input[type="text"], textarea {
+      width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a;
+      border-radius: 10px; color: #f0f0f0; font-size: 14px;
+      padding: 11px 14px; font-family: inherit; transition: border-color 0.2s; margin-bottom: 14px;
     }
-
-    input[type="text"]:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #555;
-    }
-
-    select option { background: #1e1e1e; }
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: #555; }
     textarea { resize: vertical; min-height: 80px; }
 
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    /* 画像アップロード */
+    .upload-area {
+      border: 2px dashed #2a2a2a; border-radius: 12px;
+      padding: 20px; text-align: center; cursor: pointer;
+      transition: all 0.2s; margin-bottom: 14px; background: #111;
+    }
+    .upload-area:hover, .upload-area.drag-over { border-color: #555; background: #161616; }
+    .upload-area p { color: #555; font-size: 13px; line-height: 1.7; }
+    .upload-area p strong { color: #888; }
 
-    .drwu-options { display: none; }
-    .drwu-options.show { display: block; }
+    .image-previews {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+    }
 
-    .generate-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #3a7bd5, #2d62b8);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      margin-top: 4px;
+    .preview-item {
+      position: relative; width: 72px; height: 72px;
+    }
+    .preview-item img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #2a2a2a; }
+    .preview-item .remove-btn {
+      position: absolute; top: -6px; right: -6px;
+      width: 20px; height: 20px; background: #333; border: none;
+      border-radius: 50%; color: #aaa; font-size: 12px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
       font-family: inherit;
     }
+    .preview-item .remove-btn:hover { background: #555; color: #fff; }
 
-    .generate-btn.moegi-mode {
-      background: linear-gradient(135deg, #5a9e5a, #448844);
+    .generate-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #3a7bd5, #2d62b8);
+      border: none; border-radius: 12px; color: #fff;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s; margin-top: 4px; font-family: inherit;
     }
-
+    .generate-btn.moegi-mode { background: linear-gradient(135deg, #5a9e5a, #448844); }
     .generate-btn:hover { opacity: 0.9; }
     .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .loading { display: none; text-align: center; padding: 48px 24px; color: #666; }
     .loading.show { display: block; }
-
     .spinner {
-      width: 40px; height: 40px;
-      border: 3px solid #2a2a2a;
-      border-top-color: #5b9bd5;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
+      width: 40px; height: 40px; border: 3px solid #2a2a2a;
+      border-top-color: #5b9bd5; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .error-box {
-      display: none;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 10px;
-      padding: 14px;
-      color: #f87171;
-      font-size: 14px;
-      margin-top: 12px;
+      display: none; background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
+      padding: 14px; color: #f87171; font-size: 14px; margin-top: 12px;
     }
     .error-box.show { display: block; }
 
-    /* 結果 */
     .results { display: none; margin-top: 24px; }
     .results.show { display: block; }
 
-    .tab-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
+    .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; }
     .tab-btn {
-      flex: 1;
-      padding: 11px 8px;
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      color: #777;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
+      flex: 1; padding: 11px 8px; background: #161616;
+      border: 1px solid #2a2a2a; border-radius: 10px; color: #777;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
     }
-
     .tab-btn:hover { border-color: #555; color: #ccc; }
     .tab-btn.active { background: rgba(91,155,213,0.1); border-color: #5b9bd5; color: #5b9bd5; }
     .tab-btn.active.moegi-tab { background: rgba(109,179,109,0.1); border-color: #6db36d; color: #6db36d; }
@@ -186,125 +125,30 @@
     .pattern-panel { display: none; }
     .pattern-panel.active { display: block; }
 
-    /* 表紙 */
-    .cover-box {
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 14px;
-      padding: 20px 22px;
-      margin-bottom: 14px;
-    }
-
+    .cover-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
     .cover-box h3 { font-size: 13px; color: #666; margin-bottom: 14px; }
-
-    .hook-text {
-      font-size: 22px;
-      font-weight: 700;
-      color: #f0f0f0;
-      line-height: 1.4;
-      margin-bottom: 6px;
-    }
-
-    .sub-text {
-      font-size: 14px;
-      color: #999;
-      margin-bottom: 14px;
-    }
-
+    .hook-text { font-size: 22px; font-weight: 700; color: #f0f0f0; line-height: 1.4; margin-bottom: 6px; }
+    .sub-text { font-size: 14px; color: #999; margin-bottom: 14px; }
     .cover-actions { display: flex; gap: 8px; }
 
-    /* スライド */
-    .slides-box {
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 14px;
-      padding: 20px 22px;
-      margin-bottom: 14px;
-    }
+    .slides-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
+    .slides-box h3 { font-size: 13px; color: #666; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .slide-item { border: 1px solid #252525; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; background: #111; }
+    .slide-num { font-size: 11px; color: #555; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
+    .slide-title { font-size: 15px; font-weight: 700; color: #e0e0e0; margin-bottom: 8px; }
+    .slide-body { font-size: 14px; color: #bbb; line-height: 1.8; white-space: pre-wrap; }
 
-    .slides-box h3 {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .slide-item {
-      border: 1px solid #252525;
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      background: #111;
-    }
-
-    .slide-num {
-      font-size: 11px;
-      color: #555;
-      margin-bottom: 6px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .slide-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #e0e0e0;
-      margin-bottom: 8px;
-    }
-
-    .slide-body {
-      font-size: 14px;
-      color: #bbb;
-      line-height: 1.8;
-      white-space: pre-wrap;
-    }
-
-    /* デザインプロンプト */
-    .prompt-box {
-      background: rgba(91,155,213,0.05);
-      border: 1px solid rgba(91,155,213,0.2);
-      border-radius: 14px;
-      padding: 20px 22px;
-      margin-bottom: 14px;
-    }
-
+    .prompt-box { background: rgba(91,155,213,0.05); border: 1px solid rgba(91,155,213,0.2); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
     .prompt-box h3 { font-size: 13px; color: #5b9bd5; margin-bottom: 14px; }
-
     .prompt-section { margin-bottom: 16px; }
-    .prompt-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 8px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .prompt-text {
-      font-size: 13px;
-      color: #ccc;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      background: #0d0d0d;
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-    }
+    .prompt-label { font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
+    .prompt-text { font-size: 13px; color: #ccc; line-height: 1.7; white-space: pre-wrap; background: #0d0d0d; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
 
     .copy-btn {
-      padding: 6px 14px;
-      background: transparent;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #777;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      font-family: inherit;
+      padding: 6px 14px; background: transparent; border: 1px solid #333;
+      border-radius: 8px; color: #777; font-size: 12px; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap; font-family: inherit;
     }
-
     .copy-btn:hover { border-color: #5b9bd5; color: #5b9bd5; }
     .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
     .copy-btn.moegi:hover { border-color: #6db36d; color: #6db36d; }
@@ -322,7 +166,6 @@
       <p>表紙フック・スライド内容・Canva用デザインプロンプトを3パターン生成</p>
     </header>
 
-    <!-- ブランド選択 -->
     <div class="brand-selector">
       <button class="brand-btn drwu active" id="btnDrwu" onclick="selectBrand('drwu')">
         DR.WU
@@ -337,41 +180,20 @@
     <div class="card">
       <h2>📝 投稿内容を入力</h2>
 
-      <!-- DR.WU専用オプション -->
-      <div class="drwu-options show" id="drwuOptions">
-        <div class="row">
-          <div>
-            <label>シリーズ</label>
-            <select id="series">
-              <option value="">選択してください</option>
-              <option value="ヒアルコンプレクス（保湿）">ヒアルコンプレクス（保湿）</option>
-              <option value="マンデリック（角質ケア）">マンデリック（角質ケア）</option>
-              <option value="スクワランエクス（バリア修復）">スクワランエクス（バリア修復）</option>
-              <option value="UV/サンスクリーン+">UV/サンスクリーン+</option>
-              <option value="エイジヴァーサル（エイジングケア）">エイジヴァーサル（エイジングケア）</option>
-              <option value="グルタライトC（ブライトニング）">グルタライトC（ブライトニング）</option>
-              <option value="レチノール">レチノール</option>
-              <option value="シカ/センシファイト（肌修復）">シカ/センシファイト（肌修復）</option>
-              <option value="ナイアシンアミド美容液">ナイアシンアミド美容液</option>
-            </select>
-          </div>
-          <div>
-            <label>投稿タイプ</label>
-            <select id="postType">
-              <option value="">選択してください</option>
-              <option value="コラム（知識・悩みの原因解説）">コラム</option>
-              <option value="使い方（商品の正しい使い方）">使い方</option>
-              <option value="商品詳細（成分・効能・選ぶ理由）">商品詳細</option>
-            </select>
-          </div>
-        </div>
+      <label>参考画像（商品スクショ・資料など、複数可）</label>
+      <div class="upload-area" id="uploadArea"
+        onclick="document.getElementById('fileInput').click()"
+        ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <p><strong>クリックまたはドラッグ＆ドロップ</strong><br>商品スクショ・成分表・参考資料など<br>複数枚OK（PNG・JPG・WEBP）</p>
       </div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="onFileSelect(event)">
+      <div class="image-previews" id="imagePreviews"></div>
 
-      <label>テーマ・伝えたいこと <span style="color:#f87171">*</span></label>
-      <textarea id="theme" placeholder="例：マンデル酸で毛穴が気になる人に向けた使い方を紹介したい&#10;例：梅雨の湿気で肌がベタつく人に保湿の見直しを提案したい&#10;例：MOEGIを飲み始めたら腸の調子が変わった体験談をもとに紹介したい"></textarea>
+      <label>伝えたいこと・テーマ <span style="color:#f87171">*</span></label>
+      <textarea id="theme" placeholder="例：マンデリックセラム18%の商品詳細投稿。毛穴・ニキビ悩みの30代女性に向けて&#10;例：ヒアルコンプレクスの使い方投稿。乾燥肌の正しい保湿ケアの順番を教えたい&#10;例：MOEGIを使い始めてから体の内側の変化を感じた体験談ベースで紹介したい"></textarea>
 
       <label>追加情報（強調したいポイント・お客様の声など）</label>
-      <textarea id="extra" placeholder="例：Qoo10角質ケア部門1位の実績を入れたい&#10;例：敏感肌でも使えることを強調したい&#10;例：お客様の声「2週間で体が軽くなった」を入れたい" style="min-height:60px;"></textarea>
+      <textarea id="extra" placeholder="例：Qoo10角質ケア部門1位の実績を入れたい&#10;例：敏感肌でも使えることを強調したい" style="min-height:60px;"></textarea>
     </div>
 
     <button class="generate-btn" id="generateBtn" onclick="generate()">✨ カルーセルを生成する（3パターン）</button>
@@ -388,14 +210,74 @@
 
   <script>
     let currentBrand = 'drwu';
+    let uploadedImages = [];
 
     function selectBrand(brand) {
       currentBrand = brand;
       document.getElementById('btnDrwu').className = 'brand-btn drwu' + (brand === 'drwu' ? ' active' : '');
       document.getElementById('btnMoegi').className = 'brand-btn moegi' + (brand === 'moegi' ? ' active' : '');
-      document.getElementById('drwuOptions').className = 'drwu-options' + (brand === 'drwu' ? ' show' : '');
-      const btn = document.getElementById('generateBtn');
-      btn.className = 'generate-btn' + (brand === 'moegi' ? ' moegi-mode' : '');
+      document.getElementById('generateBtn').className = 'generate-btn' + (brand === 'moegi' ? ' moegi-mode' : '');
+    }
+
+    function onDragOver(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+    function onDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
+    function onDrop(e) {
+      e.preventDefault();
+      document.getElementById('uploadArea').classList.remove('drag-over');
+      handleFiles(Array.from(e.dataTransfer.files));
+    }
+    function onFileSelect(e) { handleFiles(Array.from(e.target.files)); e.target.value = ''; }
+
+    function handleFiles(files) {
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      imageFiles.forEach(file => resizeAndEncode(file).then(img => {
+        uploadedImages.push(img);
+        renderPreviews();
+      }));
+    }
+
+    function resizeAndEncode(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const MAX = 1024;
+            let w = img.width, h = img.height;
+            if (w > MAX || h > MAX) {
+              if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+              else { w = Math.round(w * MAX / h); h = MAX; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            const b64 = dataUrl.split(',')[1];
+            resolve({ base64: b64, mediaType: 'image/jpeg', dataUrl, name: file.name });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPreviews() {
+      const container = document.getElementById('imagePreviews');
+      container.innerHTML = '';
+      uploadedImages.forEach((img, i) => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `
+          <img src="${img.dataUrl}" alt="${img.name}">
+          <button class="remove-btn" onclick="removeImage(${i})">×</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function removeImage(i) {
+      uploadedImages.splice(i, 1);
+      renderPreviews();
     }
 
     async function generate() {
@@ -410,7 +292,7 @@
 
       const theme = document.getElementById('theme').value.trim();
       if (!theme) {
-        errorBox.textContent = 'テーマを入力してください';
+        errorBox.textContent = 'テーマ・伝えたいことを入力してください';
         errorBox.classList.add('show');
         return;
       }
@@ -424,10 +306,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             brand: currentBrand,
-            series: document.getElementById('series')?.value || '',
-            postType: document.getElementById('postType')?.value || '',
             theme,
             extra: document.getElementById('extra').value.trim(),
+            images: uploadedImages.map(({ base64, mediaType }) => ({ base64, mediaType })),
           }),
         });
 
@@ -489,27 +370,21 @@
     function renderResults(text) {
       const results = document.getElementById('results');
       const isMoegi = currentBrand === 'moegi';
-      const accentColor = isMoegi ? '#6db36d' : '#5b9bd5';
-
       const tabBar = document.createElement('div');
       tabBar.className = 'tab-bar';
-
       const panels = [];
 
       for (let i = 1; i <= 3; i++) {
         const coverText = parseSection(text, `パターン${i}表紙`);
         const slidesText = parseSection(text, `パターン${i}スライド`);
         const promptText = parseSection(text, `パターン${i}デザインプロンプト`);
-
         const cover = parseCover(coverText);
         const slides = parseSlides(slidesText);
         const design = parseDesignPrompt(promptText);
 
-        // タブ
         const tabBtn = document.createElement('button');
         tabBtn.className = 'tab-btn' + (i === 1 ? ' active' + (isMoegi ? ' moegi-tab' : '') : '');
         tabBtn.textContent = `パターン${i}`;
-        tabBtn.style.setProperty('--accent', accentColor);
         const idx = i - 1;
         tabBtn.addEventListener('click', () => {
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'moegi-tab'));
@@ -520,14 +395,13 @@
         });
         tabBar.appendChild(tabBtn);
 
-        // パネル
         const panel = document.createElement('div');
         panel.className = 'pattern-panel' + (i === 1 ? ' active' : '');
 
         // 表紙
         const coverBox = document.createElement('div');
         coverBox.className = 'cover-box';
-        coverBox.innerHTML = `<h3>🖼 表紙コピー</h3>`;
+        coverBox.innerHTML = '<h3>🖼 表紙コピー</h3>';
         const hookEl = document.createElement('div');
         hookEl.className = 'hook-text';
         hookEl.textContent = cover.hook;
@@ -536,16 +410,13 @@
         subEl.textContent = cover.sub;
         const actions = document.createElement('div');
         actions.className = 'cover-actions';
-        const copyHookBtn = document.createElement('button');
-        copyHookBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-        copyHookBtn.textContent = 'フックコピー';
-        copyHookBtn.addEventListener('click', () => copyText(copyHookBtn, cover.hook));
-        const copySubBtn = document.createElement('button');
-        copySubBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-        copySubBtn.textContent = 'サブコピー';
-        copySubBtn.addEventListener('click', () => copyText(copySubBtn, cover.sub));
-        actions.appendChild(copyHookBtn);
-        actions.appendChild(copySubBtn);
+        [['フックコピー', cover.hook], ['サブコピー', cover.sub]].forEach(([label, val]) => {
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
+          btn.textContent = label;
+          btn.addEventListener('click', () => copyText(btn, val));
+          actions.appendChild(btn);
+        });
         coverBox.appendChild(hookEl);
         coverBox.appendChild(subEl);
         coverBox.appendChild(actions);
@@ -555,26 +426,21 @@
         if (slides.length > 0) {
           const slidesBox = document.createElement('div');
           slidesBox.className = 'slides-box';
-          const slidesHeader = document.createElement('h3');
-          slidesHeader.innerHTML = '📄 スライド内容';
+          const h3 = document.createElement('h3');
+          h3.textContent = '📄 スライド内容';
           const copyAllBtn = document.createElement('button');
           copyAllBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
           copyAllBtn.textContent = '全スライドコピー';
           const allText = slides.map(s => `【スライド${s.num}】${s.title}\n${s.body}`).join('\n\n');
           copyAllBtn.addEventListener('click', () => copyText(copyAllBtn, allText));
-          slidesHeader.appendChild(copyAllBtn);
-          slidesBox.appendChild(slidesHeader);
-
-          for (const slide of slides) {
+          h3.appendChild(copyAllBtn);
+          slidesBox.appendChild(h3);
+          slides.forEach(slide => {
             const item = document.createElement('div');
             item.className = 'slide-item';
-            item.innerHTML = `
-              <div class="slide-num">SLIDE ${slide.num}</div>
-              <div class="slide-title">${escHtml(slide.title)}</div>
-              <div class="slide-body">${escHtml(slide.body)}</div>
-            `;
+            item.innerHTML = `<div class="slide-num">SLIDE ${slide.num}</div><div class="slide-title">${esc(slide.title)}</div><div class="slide-body">${esc(slide.body)}</div>`;
             slidesBox.appendChild(item);
-          }
+          });
           panel.appendChild(slidesBox);
         }
 
@@ -583,39 +449,25 @@
           const promptBox = document.createElement('div');
           promptBox.className = 'prompt-box';
           promptBox.innerHTML = '<h3>🎨 Canva用 ChatGPTデザインプロンプト</h3>';
-
-          if (design.cover) {
+          [['表紙デザイン指示', design.cover], ['スライドデザイン指示', design.slide]].forEach(([label, val]) => {
+            if (!val) return;
             const sec = document.createElement('div');
             sec.className = 'prompt-section';
-            sec.innerHTML = '<div class="prompt-label">表紙デザイン指示</div>';
+            const labelEl = document.createElement('div');
+            labelEl.className = 'prompt-label';
+            labelEl.textContent = label;
             const textEl = document.createElement('div');
             textEl.className = 'prompt-text';
-            textEl.textContent = design.cover;
+            textEl.textContent = val;
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
             copyBtn.textContent = 'コピー';
-            copyBtn.addEventListener('click', () => copyText(copyBtn, design.cover));
+            copyBtn.addEventListener('click', () => copyText(copyBtn, val));
+            sec.appendChild(labelEl);
             sec.appendChild(textEl);
             sec.appendChild(copyBtn);
             promptBox.appendChild(sec);
-          }
-
-          if (design.slide) {
-            const sec = document.createElement('div');
-            sec.className = 'prompt-section';
-            sec.innerHTML = '<div class="prompt-label">スライドデザイン指示</div>';
-            const textEl = document.createElement('div');
-            textEl.className = 'prompt-text';
-            textEl.textContent = design.slide;
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-            copyBtn.textContent = 'コピー';
-            copyBtn.addEventListener('click', () => copyText(copyBtn, design.slide));
-            sec.appendChild(textEl);
-            sec.appendChild(copyBtn);
-            promptBox.appendChild(sec);
-          }
-
+          });
           panel.appendChild(promptBox);
         }
 
@@ -629,18 +481,16 @@
     }
 
     function copyText(btn, text) {
+      if (!text) return;
       navigator.clipboard.writeText(text).then(() => {
         const orig = btn.textContent;
         btn.textContent = '✓ コピー済み';
         btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = orig;
-          btn.classList.remove('copied');
-        }, 2000);
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
       });
     }
 
-    function escHtml(s) {
+    function esc(s) {
       return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
   </script>
