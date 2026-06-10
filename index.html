@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threads 投稿ジェネレーター</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-area {
+      border: 2px dashed #333;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: #a855f7;
+      background: rgba(168, 85, 247, 0.05);
+    }
+
+    .upload-area input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon { font-size: 40px; margin-bottom: 12px; }
+
+    .upload-area p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .upload-area strong { color: #a855f7; }
+
+    .previews {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .preview-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-item button {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #f0f0f0;
+      font-size: 14px;
+      padding: 12px;
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #a855f7;
+    }
+
+    .tone-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tone-option {
+      position: relative;
+    }
+
+    .tone-option input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+    }
+
+    .tone-option label {
+      display: block;
+      padding: 12px;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      margin: 0;
+    }
+
+    .tone-option label:hover {
+      border-color: #555;
+    }
+
+    .tone-option input:checked + label {
+      border-color: #a855f7;
+      background: rgba(168, 85, 247, 0.1);
+      color: #c084fc;
+    }
+
+    .tone-emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+    .tone-name { font-size: 13px; font-weight: 600; color: #ccc; }
+    .tone-desc { font-size: 11px; color: #666; margin-top: 2px; }
+
+    .generate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+
+    .generate-btn:hover { opacity: 0.9; }
+    .generate-btn:active { transform: scale(0.99); }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      color: #888;
+    }
+
+    .loading.show { display: block; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #2a2a2a;
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results { display: none; }
+    .results.show { display: block; }
+
+    .result-pattern {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .result-pattern h3 {
+      font-size: 13px;
+      color: #a855f7;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .result-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #e8e8e8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .copy-btn {
+      margin-top: 14px;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      border-color: #a855f7;
+      color: #a855f7;
+    }
+
+    .copy-btn.copied {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    .error-box {
+      display: none;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      padding: 14px;
+      color: #f87171;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .error-box.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>✦ Threads ジェネレーター</h1>
+      <p>Instagram投稿画像を解析して、バズるThreads文章を自動作成</p>
+    </header>
+
+    <div class="card">
+      <h2>📸 Instagram投稿画像をアップロード</h2>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <div class="upload-icon">🖼️</div>
+        <p><strong>クリックまたはドラッグ</strong>で画像を追加<br>
+        複数枚OK（PNG・JPG対応）</p>
+      </div>
+      <div class="previews" id="previews"></div>
+    </div>
+
+    <div class="card">
+      <h2>🎙️ トーンを選ぶ</h2>
+      <div class="tone-grid">
+        <div class="tone-option">
+          <input type="radio" name="tone" id="casual" value="casual" checked>
+          <label for="casual">
+            <span class="tone-emoji">😊</span>
+            <span class="tone-name">カジュアル</span>
+            <span class="tone-desc">親しみやすい口語体</span>
+          </label>
+        </div>
+        <div class="tone-option">
+          <input type="radio" name="tone" id="professional" value="professional">
+          <label for="professional">
+            <span class="tone-emoji">💼</span>
+            <span class="tone-name">プロフェッショナル</span>
+            <span class="tone-desc">信頼感・権威性</span>
+          </label>
+        </div>
+        <div class="tone-option">
+          <input type="radio" name="tone" id="inspiring" value="inspiring">
+          <label for="inspiring">
+            <span class="tone-emoji">🔥</span>
+            <span class="tone-name">インスパイア</span>
+            <span class="tone-desc">感情を動かす・心に響く</span>
+          </label>
+        </div>
+        <div class="tone-option">
+          <input type="radio" name="tone" id="funny" value="funny">
+          <label for="funny">
+            <span class="tone-emoji">😂</span>
+            <span class="tone-name">ユーモア</span>
+            <span class="tone-desc">笑えて共感できる</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 追加情報（任意）</h2>
+      <label>投稿の背景・伝えたいことを補足すると精度が上がります</label>
+      <textarea id="context" placeholder="例：新商品の発売告知です。ターゲットは20代女性で、自然素材にこだわっていることを伝えたい"></textarea>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generate()">
+      ✨ バズる文章を生成する
+    </button>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>画像を解析してバズる文章を生成中...</p>
+    </div>
+
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    let files = [];
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previews = document.getElementById('previews');
+
+    fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      addFiles(e.dataTransfer.files);
+    });
+
+    function addFiles(newFiles) {
+      for (const file of newFiles) {
+        if (!file.type.startsWith('image/')) continue;
+        if (files.length >= 10) break;
+        files.push(file);
+      }
+      renderPreviews();
+    }
+
+    function removeFile(index) {
+      files.splice(index, 1);
+      renderPreviews();
+    }
+
+    function renderPreviews() {
+      previews.innerHTML = '';
+      files.forEach((file, i) => {
+        const url = URL.createObjectURL(file);
+        const div = document.createElement('div');
+        div.className = 'preview-item';
+        div.innerHTML = `
+          <img src="${url}" alt="preview">
+          <button onclick="removeFile(${i})">×</button>
+        `;
+        previews.appendChild(div);
+      });
+    }
+
+    async function generate() {
+      const errorBox = document.getElementById('errorBox');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const btn = document.getElementById('generateBtn');
+
+      errorBox.classList.remove('show');
+      results.classList.remove('show');
+
+      if (files.length === 0) {
+        errorBox.textContent = '画像をアップロードしてください';
+        errorBox.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      loading.classList.add('show');
+
+      try {
+        const formData = new FormData();
+        files.forEach(f => formData.append('images', f));
+        formData.append('tone', document.querySelector('input[name="tone"]:checked').value);
+        formData.append('context', document.getElementById('context').value);
+
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || '生成に失敗しました');
+
+        renderResults(data.result);
+      } catch (err) {
+        errorBox.textContent = `エラー: ${err.message}`;
+        errorBox.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        loading.classList.remove('show');
+      }
+    }
+
+    function renderResults(text) {
+      const results = document.getElementById('results');
+      const patterns = text.split('---').filter(p => p.trim());
+
+      results.innerHTML = '<div class="card"><h2>🚀 生成された投稿文</h2></div>';
+
+      patterns.forEach((pattern, i) => {
+        const lines = pattern.trim().split('\n');
+        const titleLine = lines.find(l => l.startsWith('【')) || `パターン ${i + 1}`;
+        const bodyLines = lines.filter(l => !l.startsWith('【'));
+        const body = bodyLines.join('\n').trim();
+
+        if (!body) return;
+
+        const div = document.createElement('div');
+        div.className = 'result-pattern';
+        div.innerHTML = `
+          <h3>${titleLine.replace(/【|】/g, '')}</h3>
+          <div class="result-text">${escapeHtml(body)}</div>
+          <button class="copy-btn" onclick="copyText(this, \`${escapeJs(body)}\`)">
+            📋 コピー
+          </button>
+        `;
+        results.appendChild(div);
+      });
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ コピーしました';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 コピー';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function escapeJs(str) {
+      return str.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');
+    }
+  </script>
+</body>
+</html>
