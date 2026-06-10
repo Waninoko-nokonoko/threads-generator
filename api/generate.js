@@ -1,4 +1,4 @@
-export const config = { runtime: 'edge' };
+export const config = { maxDuration: 60 };
 
 const BUZZ_PATTERNS = `
 ## Threadsバズりパターン（必須知識）
@@ -26,50 +26,25 @@ const BUZZ_PATTERNS = `
 - 「です・ます」の連続
 `;
 
-export default async function handler(req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
-  }
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const formData = await req.formData();
-    const tone = formData.get('tone') || 'casual';
-    const context = formData.get('context') || '';
-    const images = formData.getAll('images');
+    const { images, tone, context } = req.body;
 
-    if (images.length === 0) {
-      return new Response(JSON.stringify({ error: '画像をアップロードしてください' }), { status: 400 });
+    if (!images || images.length === 0) {
+      return res.status(400).json({ error: '画像をアップロードしてください' });
     }
 
-    const imageContents = await Promise.all(
-      images.map(async (image) => {
-        const buffer = await image.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        const base64 = btoa(binary);
-        return {
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: image.type || 'image/png',
-            data: base64,
-          },
-        };
-      })
-    );
+    const imageContents = images.map(({ base64, mediaType }) => ({
+      type: 'image',
+      source: { type: 'base64', media_type: mediaType || 'image/png', data: base64 },
+    }));
 
     const toneMap = {
       casual: 'フレンドリーでカジュアル、親しみやすい口語体',
@@ -132,6 +107,22 @@ Threadsでは「連続投稿（スレッド）」形式が最もバズりやす�
 ▼ 投稿4（最終）
 （結論＋質問）
 #タグ1 #タグ2
+
+---
+【パターン3：○○型】
+
+▼ 投稿1
+（フックの文章）
+
+▼ 投稿2
+（中身）
+
+▼ 投稿3
+（中身）
+
+▼ 投稿4（最終）
+（結論＋質問）
+#タグ1 #タグ2
 ---`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -143,14 +134,11 @@ Threadsでは「連続投稿（スレッド）」形式が最もバズりやす�
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
+        max_tokens: 3000,
         messages: [
           {
             role: 'user',
-            content: [
-              ...imageContents,
-              { type: 'text', text: prompt },
-            ],
+            content: [...imageContents, { type: 'text', text: prompt }],
           },
         ],
       }),
@@ -158,19 +146,12 @@ Threadsでは「連続投稿（スレッド）」形式が最もバズりやす�
 
     if (!response.ok) {
       const error = await response.json();
-      return new Response(JSON.stringify({ error: error.error?.message || 'API error' }), { status: 500 });
+      return res.status(500).json({ error: error.error?.message || 'API error' });
     }
 
     const data = await response.json();
-    const result = data.content[0].text;
-
-    return new Response(JSON.stringify({ result }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    return res.status(200).json({ result: data.content[0].text });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return res.status(500).json({ error: err.message });
   }
 }
