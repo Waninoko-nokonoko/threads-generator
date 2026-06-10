@@ -15,7 +15,7 @@
       padding: 24px 16px;
     }
 
-    .container { max-width: 680px; margin: 0 auto; }
+    .container { max-width: 720px; margin: 0 auto; }
 
     header { text-align: center; margin-bottom: 40px; }
 
@@ -65,7 +65,7 @@
       margin-bottom: 8px;
     }
 
-    input[type="text"], textarea, select {
+    input[type="text"], textarea {
       width: 100%;
       background: #1e1e1e;
       border: 1px solid #2a2a2a;
@@ -121,27 +121,53 @@
     .results { display: none; }
     .results.show { display: block; }
 
-    .subjects-card {
+    /* タブ */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 8px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #888;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover { border-color: #d4a843; color: #d4a843; }
+    .tab-btn.active {
+      background: rgba(212, 168, 67, 0.1);
+      border-color: #d4a843;
+      color: #d4a843;
+    }
+
+    .pattern-panel { display: none; }
+    .pattern-panel.active { display: block; }
+
+    /* 件名 */
+    .subject-box {
       background: #161616;
       border: 1px solid #2a2a2a;
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px 24px;
       margin-bottom: 16px;
     }
 
-    .subjects-card h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #ccc;
-      margin-bottom: 16px;
+    .subject-box h3 {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
     }
 
-    .subject-item {
-      background: #1e1e1e;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
+    .subject-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -149,41 +175,26 @@
     }
 
     .subject-text {
-      font-size: 15px;
+      font-size: 17px;
       color: #f0f0f0;
+      font-weight: 600;
       flex: 1;
       line-height: 1.5;
     }
 
-    .copy-btn {
-      padding: 6px 14px;
-      background: transparent;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #888;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .copy-btn:hover { border-color: #d4a843; color: #d4a843; }
-    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
-
-    .body-card {
+    /* 本文 */
+    .body-box {
       background: #161616;
       border: 1px solid #2a2a2a;
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px 24px;
       margin-bottom: 16px;
     }
 
-    .body-card h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #ccc;
-      margin-bottom: 16px;
+    .body-box h3 {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -198,10 +209,10 @@
       background: #111;
       border-radius: 10px;
       padding: 20px;
-      margin-bottom: 14px;
     }
 
-    .insight-card {
+    /* 改善ポイント */
+    .insight-box {
       background: rgba(212, 168, 67, 0.05);
       border: 1px solid rgba(212, 168, 67, 0.15);
       border-radius: 12px;
@@ -209,18 +220,35 @@
       margin-bottom: 16px;
     }
 
-    .insight-card h3 {
+    .insight-box h3 {
       font-size: 14px;
       color: #d4a843;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .insight-card p {
+    .insight-box p {
       font-size: 14px;
       color: #bbb;
       line-height: 1.7;
       white-space: pre-wrap;
     }
+
+    .copy-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #888;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .copy-btn:hover { border-color: #d4a843; color: #d4a843; }
+    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
 
     .error-box {
       display: none;
@@ -261,7 +289,7 @@
 
     <header>
       <h1>✉ MOEGI メルマガジェネレーター</h1>
-      <p>過去データを学習済み。売れるメルマガを自動生成</p>
+      <p>過去データを学習済み。売れるメルマガを3パターン自動生成</p>
     </header>
 
     <div class="insight">
@@ -291,13 +319,13 @@
       <textarea id="extra" placeholder="例：先月、お客様から「飲み始めて2週間で体が軽くなった」という声をいただいた&#10;例：今回はケストースを一緒に紹介したい"></textarea>
     </div>
 
-    <button class="generate-btn" onclick="generate()">✨ メルマガを生成する</button>
+    <button class="generate-btn" onclick="generate()">✨ メルマガを生成する（3パターン）</button>
 
     <div class="error-box" id="errorBox"></div>
 
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <p>過去データを分析して売れる文章を生成中...</p>
+      <p>過去データを分析して売れる文章を3パターン生成中...<br><small style="color:#555">30〜40秒かかります</small></p>
     </div>
 
     <div class="results" id="results"></div>
@@ -312,6 +340,7 @@
 
       errorBox.classList.remove('show');
       results.classList.remove('show');
+      results.innerHTML = '';
 
       const theme = document.getElementById('theme').value.trim();
       if (!theme) {
@@ -349,63 +378,99 @@
     }
 
     function parseSection(text, name) {
-      const re = new RegExp(`===\\s*${name}\\s*===\\n([\\s\\S]*?)(?====|$)`);
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(`===\\s*${escaped}\\s*===\\n([\\s\\S]*?)(?====|$)`);
       const m = text.match(re);
       return m ? m[1].trim() : '';
     }
 
     function renderResults(text) {
       const results = document.getElementById('results');
-      results.innerHTML = '';
 
-      // 件名
-      const subjects = [
-        parseSection(text, '件名1'),
-        parseSection(text, '件名2'),
-        parseSection(text, '件名3'),
-      ].filter(s => s);
+      // タブバー
+      const tabBar = document.createElement('div');
+      tabBar.className = 'tab-bar';
 
-      if (subjects.length > 0) {
-        const card = document.createElement('div');
-        card.className = 'subjects-card';
-        card.innerHTML = '<h2>✉ 件名案（3パターン）</h2>';
-        subjects.forEach(subject => {
-          const item = document.createElement('div');
-          item.className = 'subject-item';
-          item.innerHTML = `
-            <span class="subject-text">${escapeHtml(subject)}</span>
-            <button class="copy-btn">コピー</button>
-          `;
-          item.querySelector('.copy-btn').addEventListener('click', (e) => copyText(e.target, subject));
-          card.appendChild(item);
+      const labels = ['パターン1', 'パターン2', 'パターン3'];
+      const panels = [];
+
+      labels.forEach((label, i) => {
+        const n = i + 1;
+        const subject = parseSection(text, `パターン${n}件名`);
+        const body = parseSection(text, `パターン${n}本文`);
+        const points = parseSection(text, `パターン${n}改善ポイント`);
+
+        // タブボタン
+        const tabBtn = document.createElement('button');
+        tabBtn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+        tabBtn.textContent = label;
+        tabBtn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.pattern-panel').forEach(p => p.classList.remove('active'));
+          tabBtn.classList.add('active');
+          panels[i].classList.add('active');
         });
-        results.appendChild(card);
-      }
+        tabBar.appendChild(tabBtn);
 
-      // 本文
-      const body = parseSection(text, '本文');
-      if (body) {
-        const card = document.createElement('div');
-        card.className = 'body-card';
-        card.innerHTML = `
-          <h2>📄 本文 <button class="copy-btn" id="copyBodyBtn">📋 全文コピー</button></h2>
-          <div class="body-text">${escapeHtml(body)}</div>
-        `;
-        card.querySelector('#copyBodyBtn').addEventListener('click', (e) => copyText(e.target, body));
-        results.appendChild(card);
-      }
+        // パネル
+        const panel = document.createElement('div');
+        panel.className = 'pattern-panel' + (i === 0 ? ' active' : '');
 
-      // 改善ポイント
-      const insight = parseSection(text, '改善ポイント');
-      if (insight) {
-        const card = document.createElement('div');
-        card.className = 'insight-card';
-        card.innerHTML = `
-          <h3>💡 なぜこのメルマガが売れるのか</h3>
-          <p>${escapeHtml(insight)}</p>
-        `;
-        results.appendChild(card);
-      }
+        // 件名
+        if (subject) {
+          const subjectBox = document.createElement('div');
+          subjectBox.className = 'subject-box';
+          subjectBox.innerHTML = '<h3>✉ 件名</h3>';
+          const row = document.createElement('div');
+          row.className = 'subject-row';
+          const span = document.createElement('span');
+          span.className = 'subject-text';
+          span.textContent = subject;
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn';
+          btn.textContent = 'コピー';
+          btn.addEventListener('click', () => copyText(btn, subject));
+          row.appendChild(span);
+          row.appendChild(btn);
+          subjectBox.appendChild(row);
+          panel.appendChild(subjectBox);
+        }
+
+        // 本文
+        if (body) {
+          const bodyBox = document.createElement('div');
+          bodyBox.className = 'body-box';
+          const h3 = document.createElement('h3');
+          h3.textContent = '📄 本文';
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.textContent = '📋 全文コピー';
+          copyBtn.addEventListener('click', () => copyText(copyBtn, body));
+          h3.appendChild(copyBtn);
+          const bodyDiv = document.createElement('div');
+          bodyDiv.className = 'body-text';
+          bodyDiv.textContent = body;
+          bodyBox.appendChild(h3);
+          bodyBox.appendChild(bodyDiv);
+          panel.appendChild(bodyBox);
+        }
+
+        // 改善ポイント
+        if (points) {
+          const insightBox = document.createElement('div');
+          insightBox.className = 'insight-box';
+          insightBox.innerHTML = '<h3>💡 なぜこのメルマガが売れるのか</h3>';
+          const p = document.createElement('p');
+          p.textContent = points;
+          insightBox.appendChild(p);
+          panel.appendChild(insightBox);
+        }
+
+        panels.push(panel);
+      });
+
+      results.appendChild(tabBar);
+      panels.forEach(p => results.appendChild(p));
 
       results.classList.add('show');
       results.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -421,10 +486,6 @@
           btn.classList.remove('copied');
         }, 2000);
       });
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
   </script>
 </body>
