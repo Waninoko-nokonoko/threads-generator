@@ -54,7 +54,12 @@ export default async function handler(req) {
     const imageContents = await Promise.all(
       images.map(async (image) => {
         const buffer = await image.arrayBuffer();
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
         return {
           type: 'image',
           source: {
