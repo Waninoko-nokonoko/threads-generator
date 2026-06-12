@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>参考例を管理 | Threads ジェネレーター</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #0a0a0a;
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #888;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover { border-color: #555; color: #ccc; }
+
+    .card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      width: 100%;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #f0f0f0;
+      font-size: 14px;
+      padding: 12px;
+      resize: vertical;
+      min-height: 120px;
+      font-family: inherit;
+      line-height: 1.7;
+    }
+
+    textarea:focus { outline: none; border-color: #a855f7; }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    select {
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .save-btn:hover { opacity: 0.9; }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-msg {
+      color: #22c55e;
+      font-size: 13px;
+      display: none;
+    }
+
+    .examples-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .example-item {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .example-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(168, 85, 247, 0.15);
+      color: #a855f7;
+      font-weight: 600;
+    }
+
+    .date-tag {
+      font-size: 11px;
+      color: #555;
+    }
+
+    .example-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #ccc;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #555;
+      font-size: 12px;
+      padding: 4px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .delete-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #444;
+      font-size: 14px;
+    }
+
+    .loading { text-align: center; padding: 20px; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 参考例を管理</h1>
+      <a href="/" class="back-btn">← 生成に戻る</a>
+    </header>
+
+    <div class="card">
+      <h2>➕ 参考例を追加</h2>
+      <textarea id="newContent" placeholder="バズった投稿文・手直しした文章などを貼り付けてください"></textarea>
+      <div class="row">
+        <select id="newBrand">
+          <option value="">ブランドなし（共通）</option>
+          <option value="DR.WU">DR.WU</option>
+          <option value="MOEGI">MOEGI</option>
+          <option value="KuON">KuON</option>
+        </select>
+        <button class="save-btn" id="saveBtn" onclick="saveExample()">💾 保存する</button>
+        <span class="success-msg" id="successMsg">✓ 保存しました</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📋 保存済み参考例 <span id="count" style="color:#555; font-weight:400;"></span></h2>
+      <div class="loading" id="loading">読み込み中...</div>
+      <div class="examples-list" id="examplesList"></div>
+    </div>
+  </div>
+
+  <script>
+    let examples = [];
+
+    async function loadExamples() {
+      try {
+        const res = await fetch('/api/examples');
+        examples = await res.json();
+        renderExamples();
+      } catch(e) {
+        document.getElementById('loading').textContent = '読み込みエラー';
+      }
+    }
+
+    function renderExamples() {
+      const list = document.getElementById('examplesList');
+      const loading = document.getElementById('loading');
+      const count = document.getElementById('count');
+
+      loading.style.display = 'none';
+      count.textContent = `（${examples.length}件）`;
+
+      if (examples.length === 0) {
+        list.innerHTML = '<div class="empty-state">まだ参考例がありません。<br>上のフォームから追加してください。</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      examples.forEach((ex, i) => {
+        const div = document.createElement('div');
+        div.className = 'example-item';
+        div.innerHTML = `
+          <div class="example-meta">
+            ${ex.brand ? `<span class="brand-tag">${escapeHtml(ex.brand)}</span>` : '<span class="brand-tag" style="background:rgba(100,100,100,0.15);color:#666;">共通</span>'}
+            <span class="date-tag">${ex.created_at ? new Date(ex.created_at).toLocaleDateString('ja-JP') : ''}</span>
+          </div>
+          <div class="example-text">${escapeHtml(ex.content)}</div>
+          <button class="delete-btn" onclick="deleteExample(${ex.id})">削除</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    async function saveExample() {
+      const content = document.getElementById('newContent').value.trim();
+      const brand = document.getElementById('newBrand').value;
+      if (!content) return;
+
+      const btn = document.getElementById('saveBtn');
+      const msg = document.getElementById('successMsg');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/examples', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, brand }),
+        });
+
+        if (res.ok) {
+          document.getElementById('newContent').value = '';
+          msg.style.display = 'inline';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+          loadExamples();
+        }
+      } catch(e) {
+        alert('保存に失敗: ' + e.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteExample(id) {
+      if (!confirm('この参考例を削除しますか？')) return;
+      try {
+        await fetch(`/api/examples?id=${id}`, { method: 'DELETE' });
+        loadExamples();
+      } catch(e) {
+        alert('削除に失敗: ' + e.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    loadExamples();
+  </script>
+</body>
+</html>

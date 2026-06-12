@@ -33,15 +33,30 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    const response = await fetch(`${supabaseUrl}/rest/v1/examples?select=content,brand&order=created_at.desc&limit=20`, {
+    const response = await fetch(`${supabaseUrl}/rest/v1/examples?select=id,content,brand,created_at&order=created_at.desc&limit=50`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+    });
+    const data = await response.json();
+    return res.status(200).json(data);
+  }
+
+  if (req.method === 'DELETE') {
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: 'id is required' });
+
+    const response = await fetch(`${supabaseUrl}/rest/v1/examples?id=eq.${id}`, {
+      method: 'DELETE',
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
       },
     });
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    if (!response.ok) return res.status(500).json({ error: 'Delete failed' });
+    return res.status(200).json({ success: true });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
