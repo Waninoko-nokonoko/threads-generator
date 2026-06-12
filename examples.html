@@ -179,6 +179,19 @@
 
     .loading { text-align: center; padding: 20px; color: #555; }
 
+    .filter-btn {
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 20px;
+      color: #666;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: #a855f7; color: #a855f7; }
+    .filter-btn.active { background: rgba(168,85,247,0.15); border-color: #a855f7; color: #a855f7; }
+
     .upload-area {
       border: 2px dashed #333;
       border-radius: 12px;
@@ -254,6 +267,13 @@
 
     <div class="card">
       <h2>📋 保存済み参考例 <span id="count" style="color:#555; font-weight:400;"></span></h2>
+      <div id="filterBar" style="display:none; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+        <button class="filter-btn active" data-brand="">すべて</button>
+        <button class="filter-btn" data-brand="DR.WU">DR.WU</button>
+        <button class="filter-btn" data-brand="MOEGI">MOEGI</button>
+        <button class="filter-btn" data-brand="KuON">KuON</button>
+        <button class="filter-btn" data-brand="__none__">共通</button>
+      </div>
       <div class="loading" id="loading">読み込み中...</div>
       <div class="examples-list" id="examplesList"></div>
     </div>
@@ -272,21 +292,41 @@
       }
     }
 
+    let activeFilter = '';
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.brand;
+        renderExamples();
+      });
+    });
+
     function renderExamples() {
       const list = document.getElementById('examplesList');
       const loading = document.getElementById('loading');
       const count = document.getElementById('count');
+      const filterBar = document.getElementById('filterBar');
 
       loading.style.display = 'none';
-      count.textContent = `（${examples.length}件）`;
 
-      if (examples.length === 0) {
-        list.innerHTML = '<div class="empty-state">まだ参考例がありません。<br>上のフォームから追加してください。</div>';
+      const filtered = activeFilter === ''
+        ? examples
+        : activeFilter === '__none__'
+          ? examples.filter(e => !e.brand)
+          : examples.filter(e => e.brand === activeFilter);
+
+      count.textContent = `（${filtered.length}件）`;
+      filterBar.style.display = examples.length > 0 ? 'flex' : 'none';
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state">該当する参考例がありません。</div>';
         return;
       }
 
       list.innerHTML = '';
-      examples.forEach((ex, i) => {
+      filtered.forEach((ex, i) => {
         const div = document.createElement('div');
         div.className = 'example-item';
         div.innerHTML = `
