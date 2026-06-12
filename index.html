@@ -411,6 +411,23 @@
     </div>
 
     <div class="results" id="results"></div>
+
+    <!-- 参考例を追加 -->
+    <div class="card" id="addExampleCard" style="display:none; margin-top:20px;">
+      <h2>✨ 参考例を追加する</h2>
+      <label>手直しした文章をここに貼り付けてください（次回の生成精度が上がります）</label>
+      <textarea id="exampleText" placeholder="修正した投稿文をここに貼り付け..." style="margin-top:8px;"></textarea>
+      <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+        <select id="brandSelect" style="background:#1e1e1e; border:1px solid #2a2a2a; border-radius:8px; color:#f0f0f0; padding:8px 12px; font-size:13px;">
+          <option value="">ブランドなし（共通）</option>
+          <option value="DR.WU">DR.WU</option>
+          <option value="MOEGI">MOEGI</option>
+          <option value="KuON">KuON</option>
+        </select>
+        <button class="copy-btn" id="saveExampleBtn" onclick="saveExample()" style="margin-top:0;">💾 参考例として保存</button>
+      </div>
+      <div id="saveMsg" style="display:none; margin-top:10px; color:#22c55e; font-size:13px;">✓ 保存しました！次回から参考にされます。</div>
+    </div>
   </div>
 
   <script>
@@ -508,6 +525,13 @@
 
         const images = await Promise.all(files.map(resizeAndEncode));
 
+        // 参考例を取得
+        let examples = [];
+        try {
+          const exRes = await fetch('/api/examples');
+          if (exRes.ok) examples = await exRes.json();
+        } catch(e) {}
+
         const res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -515,6 +539,7 @@
             images,
             tone: document.querySelector('input[name="tone"]:checked').value,
             context: document.getElementById('context').value,
+            examples,
           }),
         });
 
@@ -583,6 +608,7 @@
       });
 
       results.classList.add('show');
+      document.getElementById('addExampleCard').style.display = 'block';
       results.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -601,8 +627,31 @@
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    function escapeJs(str) {
-      return str.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');
+    async function saveExample() {
+      const content = document.getElementById('exampleText').value.trim();
+      const brand = document.getElementById('brandSelect').value;
+      const btn = document.getElementById('saveExampleBtn');
+      const msg = document.getElementById('saveMsg');
+
+      if (!content) return;
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/examples', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, brand }),
+        });
+        if (res.ok) {
+          msg.style.display = 'block';
+          document.getElementById('exampleText').value = '';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+      } catch(e) {
+        alert('保存に失敗しました: ' + e.message);
+      } finally {
+        btn.disabled = false;
+      }
     }
   </script>
 </body>

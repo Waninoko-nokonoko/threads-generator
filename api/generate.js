@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { images, tone, context } = req.body;
+    const { images, tone, context, examples } = req.body;
 
     if (!images || images.length === 0) {
       return res.status(400).json({ error: '画像をアップロードしてください' });
@@ -53,10 +53,14 @@ export default async function handler(req, res) {
       funny: 'ユーモアがあり、思わず笑えるような軽いトーン',
     };
 
+    const examplesSection = examples && examples.length > 0
+      ? `\n## 過去の参考例（これらの文体・トーン・構成を参考にしてください）\n${examples.map((e, i) => `### 参考例${i+1}${e.brand ? `（${e.brand}）` : ''}\n${e.content}`).join('\n\n')}\n`
+      : '';
+
     const prompt = `あなたはThreads（スレッズ）のバズり投稿専門家です。
 
 ${BUZZ_PATTERNS}
-
+${examplesSection}
 ## スレッド形式について
 Threadsでは「連続投稿（スレッド）」形式が最もバズりやすい。
 - 1投稿目：強烈なフック（続きが気になる一文）

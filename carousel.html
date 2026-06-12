@@ -163,7 +163,7 @@
 
     <header>
       <h1>📱 カルーセル投稿ジェネレーター</h1>
-      <p>表紙フック・スライド内容・Canva用デザインプロンプトを3パターン生成</p>
+      <p>表紙フック・スライド内容・Canva制作指示書を2パターン生成</p>
     </header>
 
     <div class="brand-selector">
@@ -196,7 +196,7 @@
       <textarea id="extra" placeholder="例：Qoo10角質ケア部門1位の実績を入れたい&#10;例：敏感肌でも使えることを強調したい" style="min-height:60px;"></textarea>
     </div>
 
-    <button class="generate-btn" id="generateBtn" onclick="generate()">✨ カルーセルを生成する（3パターン）</button>
+    <button class="generate-btn" id="generateBtn" onclick="generate()">✨ カルーセルを生成する（2パターン）</button>
 
     <div class="error-box" id="errorBox"></div>
 
@@ -350,8 +350,8 @@
     }
 
     function parseDesignPrompt(promptText) {
-      const coverMatch = promptText.match(/【表紙デザイン指示】\s*([\s\S]*?)(?=【スライドデザイン指示】|$)/);
-      const slideMatch = promptText.match(/【スライドデザイン指示】\s*([\s\S]*?)$/);
+      const coverMatch = promptText.match(/【表紙】\s*([\s\S]*?)(?=【スライド|$)/);
+      const slideMatch = promptText.match(/(【スライド[\s\S]*?)$/);
       return {
         cover: coverMatch ? coverMatch[1].trim() : '',
         slide: slideMatch ? slideMatch[1].trim() : '',
@@ -374,10 +374,10 @@
       tabBar.className = 'tab-bar';
       const panels = [];
 
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 2; i++) {
         const coverText = parseSection(text, `パターン${i}表紙`);
         const slidesText = parseSection(text, `パターン${i}スライド`);
-        const promptText = parseSection(text, `パターン${i}デザインプロンプト`);
+        const promptText = parseSection(text, `パターン${i}制作指示`);
         const cover = parseCover(coverText);
         const slides = parseSlides(slidesText);
         const design = parseDesignPrompt(promptText);
@@ -448,8 +448,8 @@
         if (design.cover || design.slide) {
           const promptBox = document.createElement('div');
           promptBox.className = 'prompt-box';
-          promptBox.innerHTML = '<h3>🎨 Canva用 ChatGPTデザインプロンプト</h3>';
-          [['表紙デザイン指示', design.cover], ['スライドデザイン指示', design.slide]].forEach(([label, val]) => {
+          promptBox.innerHTML = '<h3>🎨 Canva制作指示書</h3>';
+          [['表紙', design.cover], ['スライド構成メモ', design.slide]].forEach(([label, val]) => {
             if (!val) return;
             const sec = document.createElement('div');
             sec.className = 'prompt-section';
