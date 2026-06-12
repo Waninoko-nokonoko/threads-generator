@@ -53,8 +53,19 @@ export default async function handler(req, res) {
       funny: 'ユーモアがあり、思わず笑えるような軽いトーン',
     };
 
-    const examplesSection = examples && examples.length > 0
-      ? `\n## 過去の参考例（これらの文体・トーン・構成を参考にしてください）\n${examples.map((e, i) => `### 参考例${i+1}${e.brand ? `（${e.brand}）` : ''}\n${e.content}`).join('\n\n')}\n`
+    // 追加コンテキストからブランドを検出
+    const BRANDS = ['DR.WU', 'MOEGI', 'KuON'];
+    const detectedBrand = BRANDS.find(b => (context || '').toUpperCase().includes(b.toUpperCase()));
+
+    // ブランドが検出された場合：そのブランド＋共通例のみ使用。未検出：全件使用
+    const filteredExamples = examples && examples.length > 0
+      ? (detectedBrand
+          ? examples.filter(e => !e.brand || e.brand === detectedBrand)
+          : examples)
+      : [];
+
+    const examplesSection = filteredExamples.length > 0
+      ? `\n## 過去の参考例（これらの文体・トーン・構成を参考にしてください）\n${filteredExamples.map((e, i) => `### 参考例${i+1}${e.brand ? `（${e.brand}）` : ''}\n${e.content}`).join('\n\n')}\n`
       : '';
 
     const prompt = `あなたはThreads（スレッズ）のバズり投稿専門家です。
