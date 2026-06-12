@@ -17,7 +17,6 @@ export default async function handler(req, res) {
     const response = await fetch(`${supabaseUrl}/rest/v1/examples`, {
       method: 'POST',
       headers: {
-        'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal',
@@ -35,7 +34,6 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const response = await fetch(`${supabaseUrl}/rest/v1/examples?select=id,content,brand,created_at&order=created_at.desc&limit=50`, {
       headers: {
-        'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
       },
     });
@@ -50,7 +48,6 @@ export default async function handler(req, res) {
     const response = await fetch(`${supabaseUrl}/rest/v1/examples?id=eq.${id}`, {
       method: 'DELETE',
       headers: {
-        'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`,
       },
     });

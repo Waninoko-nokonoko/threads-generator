@@ -220,7 +220,15 @@
         <div style="font-size:32px; margin-bottom:8px;">📱</div>
         <p style="color:#666; font-size:13px;"><strong style="color:#a855f7;">クリックまたはドラッグ</strong>でスクショを追加</p>
       </div>
-      <div id="extractStatus" style="display:none; margin-top:12px; color:#888; font-size:13px;"></div>
+      <div id="screenshotPreviews" style="display:none; margin-top:16px;">
+        <p style="font-size:13px; color:#888; margin-bottom:10px;">以下の画像から文章を抽出します：</p>
+        <div id="previewGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap:8px; margin-bottom:14px;"></div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="save-btn" id="extractBtn" onclick="runExtract()">🔍 文章を抽出して保存</button>
+          <button onclick="clearScreenshots()" style="background:transparent; border:1px solid #333; border-radius:8px; color:#666; font-size:13px; padding:10px 16px; cursor:pointer;">キャンセル</button>
+        </div>
+      </div>
+      <div id="extractStatus" style="display:none; margin-top:12px; font-size:13px;"></div>
     </div>
 
     <div class="card">
@@ -333,29 +341,59 @@
     // スクショアップロード
     const screenshotInput = document.getElementById('screenshotInput');
     const screenshotArea = document.getElementById('screenshotArea');
+    let pendingFiles = [];
 
     screenshotArea.addEventListener('dragover', (e) => { e.preventDefault(); screenshotArea.classList.add('dragover'); });
     screenshotArea.addEventListener('dragleave', () => screenshotArea.classList.remove('dragover'));
-    screenshotArea.addEventListener('drop', (e) => { e.preventDefault(); screenshotArea.classList.remove('dragover'); handleScreenshots(e.dataTransfer.files); });
-    screenshotInput.addEventListener('change', (e) => handleScreenshots(e.target.files));
+    screenshotArea.addEventListener('drop', (e) => { e.preventDefault(); screenshotArea.classList.remove('dragover'); showPreviews(Array.from(e.dataTransfer.files)); });
+    screenshotInput.addEventListener('change', (e) => showPreviews(Array.from(e.target.files)));
 
-    async function handleScreenshots(files) {
+    function showPreviews(files) {
+      pendingFiles = files;
+      const grid = document.getElementById('previewGrid');
+      const previewArea = document.getElementById('screenshotPreviews');
+      grid.innerHTML = '';
+      files.forEach((file, i) => {
+        const url = URL.createObjectURL(file);
+        const div = document.createElement('div');
+        div.style.cssText = 'position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden; border:1px solid #333;';
+        div.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+          <button onclick="removePending(${i})" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.7);border:none;color:#fff;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px;">×</button>`;
+        grid.appendChild(div);
+      });
+      previewArea.style.display = 'block';
+      document.getElementById('extractStatus').style.display = 'none';
+    }
+
+    function removePending(index) {
+      pendingFiles.splice(index, 1);
+      if (pendingFiles.length === 0) { clearScreenshots(); return; }
+      showPreviews(pendingFiles);
+    }
+
+    function clearScreenshots() {
+      pendingFiles = [];
+      document.getElementById('screenshotPreviews').style.display = 'none';
+      document.getElementById('extractStatus').style.display = 'none';
+      screenshotInput.value = '';
+    }
+
+    async function runExtract() {
       const status = document.getElementById('extractStatus');
+      const btn = document.getElementById('extractBtn');
       status.style.display = 'block';
-      status.textContent = `${files.length}枚のスクショを解析中...`;
+      status.style.color = '#888';
+      btn.disabled = true;
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        status.textContent = `解析中 ${i+1}/${files.length}...`;
-
+      for (let i = 0; i < pendingFiles.length; i++) {
+        status.textContent = `解析中 ${i+1}/${pendingFiles.length}...`;
         try {
-          const base64 = await resizeAndEncode(file);
+          const base64 = await resizeAndEncode(pendingFiles[i]);
           const res = await fetch('/api/extract', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ base64: base64.base64, mediaType: base64.mediaType }),
           });
-
           const data = await res.json();
           if (data.content) {
             await fetch('/api/examples', {
@@ -364,14 +402,13 @@
               body: JSON.stringify({ content: data.content, brand: '' }),
             });
           }
-        } catch(e) {
-          console.error(e);
-        }
+        } catch(e) { console.error(e); }
       }
 
       status.textContent = '✓ 完了！参考例に追加しました。';
       status.style.color = '#22c55e';
-      screenshotInput.value = '';
+      btn.disabled = false;
+      clearScreenshots();
       loadExamples();
     }
 
