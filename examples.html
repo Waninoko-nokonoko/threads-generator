@@ -223,7 +223,13 @@
       <div id="screenshotPreviews" style="display:none; margin-top:16px;">
         <p style="font-size:13px; color:#888; margin-bottom:10px;">以下の画像から文章を抽出します：</p>
         <div id="previewGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap:8px; margin-bottom:14px;"></div>
-        <div style="display:flex; gap:10px; align-items:center;">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <select id="extractBrand" style="background:#1e1e1e; border:1px solid #2a2a2a; border-radius:8px; color:#f0f0f0; padding:10px 12px; font-size:13px;">
+            <option value="">ブランドなし（共通）</option>
+            <option value="DR.WU">DR.WU</option>
+            <option value="MOEGI">MOEGI</option>
+            <option value="KuON">KuON</option>
+          </select>
           <button class="save-btn" id="extractBtn" onclick="runExtract()">🔍 文章を抽出して保存</button>
           <button onclick="clearScreenshots()" style="background:transparent; border:1px solid #333; border-radius:8px; color:#666; font-size:13px; padding:10px 16px; cursor:pointer;">キャンセル</button>
         </div>
@@ -396,10 +402,11 @@
           });
           const data = await res.json();
           if (data.content) {
-            await fetch('/api/examples', {
+            const brand = document.getElementById('extractBrand').value;
+          await fetch('/api/examples', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content: data.content, brand: '' }),
+              body: JSON.stringify({ content: data.content, brand }),
             });
           }
         } catch(e) { console.error(e); }

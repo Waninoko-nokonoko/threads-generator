@@ -2,13 +2,19 @@ export const config = { maxDuration: 30 };
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+
+  const headers = {
+    'apikey': supabaseKey,
+    'Authorization': `Bearer ${supabaseKey}`,
+    'Content-Type': 'application/json',
+  };
 
   if (req.method === 'POST') {
     const { content, brand } = req.body;
@@ -16,11 +22,7 @@ export default async function handler(req, res) {
 
     const response = await fetch(`${supabaseUrl}/rest/v1/examples`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
-      },
+      headers: { ...headers, 'Prefer': 'return=minimal' },
       body: JSON.stringify({ content, brand: brand || null }),
     });
 
@@ -33,10 +35,12 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const response = await fetch(`${supabaseUrl}/rest/v1/examples?select=id,content,brand,created_at&order=created_at.desc&limit=50`, {
-      headers: {
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
+      headers,
     });
+    if (!response.ok) {
+      const err = await response.text();
+      return res.status(500).json({ error: err });
+    }
     const data = await response.json();
     return res.status(200).json(data);
   }
@@ -47,9 +51,7 @@ export default async function handler(req, res) {
 
     const response = await fetch(`${supabaseUrl}/rest/v1/examples?id=eq.${id}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
+      headers,
     });
 
     if (!response.ok) return res.status(500).json({ error: 'Delete failed' });
