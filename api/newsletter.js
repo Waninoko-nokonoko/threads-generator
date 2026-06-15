@@ -206,11 +206,48 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { theme, urgency, season, extra } = req.body;
+    const { theme, urgency, season, extra, mode, draft, notes } = req.body;
 
-    if (!theme) return res.status(400).json({ error: 'テーマを入力してください' });
+    let prompt;
 
-    const prompt = `あなたはMOEGIのメルマガ専門家です。実際に購入につながった過去メルマガを学習済みです。
+    if (mode === 'polish') {
+      if (!draft) return res.status(400).json({ error: '元の文章を入力してください' });
+
+      prompt = `あなたはMOEGIのメルマガ専門家です。実際に購入につながった過去メルマガを学習済みです。
+
+${MOEGI_BRAND}
+
+${WINNING_EXAMPLES}
+
+${MOEGI_VOICE}
+
+## ブラッシュアップの観点（必ず確認する）
+1. 冒頭3行以内に本題が来ているか（来ていなければ前倒し）
+2. 各セクション冒頭にフックワードがあるか（「実は」「なぜ〇〇か？」など）
+3. 「今買う理由」が明確にあるか（なければ季節感・特典で追加）
+4. ケストース7日分プレゼント特典が入っているか（なければ追加）
+5. MOEGIの文体・言葉遣いになっているか
+6. CTAの直前に「まずは〇〇だけ」などの一押しがあるか
+7. 離脱しそうなダラダラした部分を削る
+
+## 元の文章
+${draft}
+
+## 修正指示（あれば）
+${notes || 'なし'}
+
+## 出力形式（必ずこの形式で）
+===ブラッシュアップ件名===
+（改善した件名）
+===ブラッシュアップ本文===
+（改善した本文）
+===変更ポイント===
+・変更した箇所と理由を3点箇条書き`;
+
+    } else {
+      if (!theme) return res.status(400).json({ error: 'テーマを入力してください' });
+
+      prompt = `あなたはMOEGIのメルマガ専門家です。実際に購入につながった過去メルマガを学習済みです。
 
 ${MOEGI_BRAND}
 
@@ -248,6 +285,7 @@ ${RULES}
 （本文600〜800字）
 ===パターン3改善ポイント===
 （なぜ売れるか2点）`;
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',

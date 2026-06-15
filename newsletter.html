@@ -279,6 +279,44 @@
     }
 
     .nav a:hover { color: #d4a843; border-color: #d4a843; }
+
+    .mode-tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 12px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #888;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    .mode-tab:hover { border-color: #d4a843; color: #d4a843; }
+    .mode-tab.active { background: rgba(212,168,67,0.1); border-color: #d4a843; color: #d4a843; }
+
+    .mode-panel { display: none; }
+    .mode-panel.active { display: block; }
+
+    .change-box {
+      background: rgba(34,197,94,0.05);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+
+    .change-box h3 { font-size: 14px; color: #22c55e; margin-bottom: 10px; }
+    .change-box p { font-size: 14px; color: #bbb; line-height: 1.7; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -289,7 +327,7 @@
 
     <header>
       <h1>✉ MOEGI メルマガジェネレーター</h1>
-      <p>過去データを学習済み。売れるメルマガを3パターン自動生成</p>
+      <p>新規作成 / 既存文章のブラッシュアップに対応</p>
     </header>
 
     <div class="insight">
@@ -298,83 +336,138 @@
       CTR高いのに購入0の原因：「今買う理由」が弱い → このアプリが自動で補完します
     </div>
 
-    <div class="card">
-      <h2>📝 メルマガの内容を入力</h2>
-
-      <label>テーマ・伝えたいこと <span style="color:#f87171">*</span></label>
-      <textarea id="theme" placeholder="例：夏の紫外線ダメージケアにMOEGIを紹介したい&#10;例：定期購入の特典を改めてアピールしたい&#10;例：梅雨時期の体のだるさ・むくみ対策"></textarea>
-
-      <div class="row">
-        <div>
-          <label>緊急性・期限（あれば）</label>
-          <input type="text" id="urgency" placeholder="例：6月末まで10%OFF、在庫残りわずか">
-        </div>
-        <div>
-          <label>季節・時期の背景</label>
-          <input type="text" id="season" placeholder="例：梅雨入り、夏前の体づくり">
-        </div>
-      </div>
-
-      <label>追加情報（体験談・キャンペーン詳細など）</label>
-      <textarea id="extra" placeholder="例：先月、お客様から「飲み始めて2週間で体が軽くなった」という声をいただいた&#10;例：今回はケストースを一緒に紹介したい"></textarea>
+    <!-- モード切り替え -->
+    <div class="mode-tab-bar">
+      <button class="mode-tab active" onclick="switchMode('new', this)">✨ 新規作成（3パターン）</button>
+      <button class="mode-tab" onclick="switchMode('polish', this)">✏️ ブラッシュアップ</button>
     </div>
 
-    <button class="generate-btn" onclick="generate()">✨ メルマガを生成する（3パターン）</button>
+    <!-- 新規作成 -->
+    <div class="mode-panel active" id="panel-new">
+      <div class="card">
+        <h2>📝 メルマガの内容を入力</h2>
+
+        <label>テーマ・伝えたいこと <span style="color:#f87171">*</span></label>
+        <textarea id="theme" placeholder="例：夏の紫外線ダメージケアにMOEGIを紹介したい&#10;例：定期購入の特典を改めてアピールしたい&#10;例：梅雨時期の体のだるさ・むくみ対策"></textarea>
+
+        <div class="row">
+          <div>
+            <label>緊急性・期限（あれば）</label>
+            <input type="text" id="urgency" placeholder="例：6月末まで10%OFF、在庫残りわずか">
+          </div>
+          <div>
+            <label>季節・時期の背景</label>
+            <input type="text" id="season" placeholder="例：梅雨入り、夏前の体づくり">
+          </div>
+        </div>
+
+        <label>追加情報（体験談・キャンペーン詳細など）</label>
+        <textarea id="extra" placeholder="例：先月、お客様から「飲み始めて2週間で体が軽くなった」という声をいただいた&#10;例：今回はケストースを一緒に紹介したい"></textarea>
+      </div>
+
+      <button class="generate-btn" onclick="generateNew()">✨ メルマガを生成する（3パターン）</button>
+    </div>
+
+    <!-- ブラッシュアップ -->
+    <div class="mode-panel" id="panel-polish">
+      <div class="card">
+        <h2>✏️ ブラッシュアップしたい文章を貼り付け</h2>
+
+        <label>元の文章（件名＋本文）<span style="color:#f87171">*</span></label>
+        <textarea id="draft" style="min-height:200px" placeholder="件名：〇〇&#10;&#10;{name} 様&#10;&#10;本文をここに貼り付けてください..."></textarea>
+
+        <label>修正の方向性・注意点（あれば）</label>
+        <textarea id="notes" placeholder="例：冒頭が長すぎるので短くしたい&#10;例：ケストース特典を追加したい&#10;例：もっと購買につながる文章にしたい"></textarea>
+      </div>
+
+      <button class="generate-btn" onclick="generatePolish()">✏️ ブラッシュアップする</button>
+    </div>
 
     <div class="error-box" id="errorBox"></div>
 
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <p>過去データを分析して売れる文章を3パターン生成中...<br><small style="color:#555">30〜40秒かかります</small></p>
+      <p id="loadingText">生成中...<br><small style="color:#555">30〜40秒かかります</small></p>
     </div>
 
     <div class="results" id="results"></div>
   </div>
 
   <script>
-    async function generate() {
+    function switchMode(mode, btn) {
+      document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + mode).classList.add('active');
+      document.getElementById('errorBox').classList.remove('show');
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('results').innerHTML = '';
+    }
+
+    async function callAPI(body, loadingText) {
       const errorBox = document.getElementById('errorBox');
       const loading = document.getElementById('loading');
       const results = document.getElementById('results');
-      const btn = document.querySelector('.generate-btn');
+      const btns = document.querySelectorAll('.generate-btn');
 
       errorBox.classList.remove('show');
       results.classList.remove('show');
       results.innerHTML = '';
-
-      const theme = document.getElementById('theme').value.trim();
-      if (!theme) {
-        errorBox.textContent = 'テーマを入力してください';
-        errorBox.classList.add('show');
-        return;
-      }
-
-      btn.disabled = true;
+      document.getElementById('loadingText').innerHTML = loadingText;
+      btns.forEach(b => b.disabled = true);
       loading.classList.add('show');
 
       try {
         const res = await fetch('/api/newsletter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            theme,
-            urgency: document.getElementById('urgency').value.trim(),
-            season: document.getElementById('season').value.trim(),
-            extra: document.getElementById('extra').value.trim(),
-          }),
+          body: JSON.stringify(body),
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '生成に失敗しました');
-
-        renderResults(data.result);
+        return data.result;
       } catch (err) {
         errorBox.textContent = `エラー: ${err.message}`;
         errorBox.classList.add('show');
+        return null;
       } finally {
-        btn.disabled = false;
+        btns.forEach(b => b.disabled = false);
         loading.classList.remove('show');
       }
+    }
+
+    async function generateNew() {
+      const theme = document.getElementById('theme').value.trim();
+      if (!theme) {
+        const e = document.getElementById('errorBox');
+        e.textContent = 'テーマを入力してください';
+        e.classList.add('show');
+        return;
+      }
+      const result = await callAPI({
+        mode: 'new',
+        theme,
+        urgency: document.getElementById('urgency').value.trim(),
+        season: document.getElementById('season').value.trim(),
+        extra: document.getElementById('extra').value.trim(),
+      }, '過去データを分析して売れる文章を3パターン生成中...<br><small style="color:#555">30〜40秒かかります</small>');
+      if (result) renderNew(result);
+    }
+
+    async function generatePolish() {
+      const draft = document.getElementById('draft').value.trim();
+      if (!draft) {
+        const e = document.getElementById('errorBox');
+        e.textContent = '元の文章を入力してください';
+        e.classList.add('show');
+        return;
+      }
+      const result = await callAPI({
+        mode: 'polish',
+        draft,
+        notes: document.getElementById('notes').value.trim(),
+      }, 'ブラッシュアップ中...<br><small style="color:#555">20〜30秒かかります</small>');
+      if (result) renderPolish(result);
     }
 
     function parseSection(text, name) {
@@ -384,7 +477,66 @@
       return m ? m[1].trim() : '';
     }
 
-    function renderResults(text) {
+    function renderPolish(text) {
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      const subject = parseSection(text, 'ブラッシュアップ件名');
+      const body = parseSection(text, 'ブラッシュアップ本文');
+      const changes = parseSection(text, '変更ポイント');
+
+      if (subject) {
+        const box = document.createElement('div');
+        box.className = 'subject-box';
+        box.innerHTML = '<h3>✉ 件名</h3>';
+        const row = document.createElement('div');
+        row.className = 'subject-row';
+        const span = document.createElement('span');
+        span.className = 'subject-text';
+        span.textContent = subject;
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'コピー';
+        btn.addEventListener('click', () => copyText(btn, subject));
+        row.appendChild(span);
+        row.appendChild(btn);
+        box.appendChild(row);
+        results.appendChild(box);
+      }
+
+      if (body) {
+        const box = document.createElement('div');
+        box.className = 'body-box';
+        const h3 = document.createElement('h3');
+        h3.textContent = '📄 本文';
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.textContent = '📋 全文コピー';
+        copyBtn.addEventListener('click', () => copyText(copyBtn, body));
+        h3.appendChild(copyBtn);
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'body-text';
+        bodyDiv.textContent = body;
+        box.appendChild(h3);
+        box.appendChild(bodyDiv);
+        results.appendChild(box);
+      }
+
+      if (changes) {
+        const box = document.createElement('div');
+        box.className = 'change-box';
+        box.innerHTML = '<h3>✅ 変更ポイント</h3>';
+        const p = document.createElement('p');
+        p.textContent = changes;
+        box.appendChild(p);
+        results.appendChild(box);
+      }
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderNew(text) {
       const results = document.getElementById('results');
 
       // タブバー
