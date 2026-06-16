@@ -9,17 +9,10 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
-      background: #0a0a0a;
-      color: #f0f0f0;
-      min-height: 100vh;
-      padding: 24px 16px;
+      background: #0a0a0a; color: #f0f0f0; min-height: 100vh; padding: 24px 16px;
     }
 
     .container { max-width: 760px; margin: 0 auto; }
-
-    header { text-align: center; margin-bottom: 36px; }
-    header h1 { font-size: 26px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; }
-    header p { color: #666; font-size: 14px; }
 
     .nav { text-align: center; margin-bottom: 28px; }
     .nav a {
@@ -29,180 +22,218 @@
     }
     .nav a:hover { color: #aaa; border-color: #555; }
 
-    .brand-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    header { text-align: center; margin-bottom: 28px; }
+    header h1 { font-size: 26px; font-weight: 700; color: #f0f0f0; margin-bottom: 6px; }
+    header p { color: #555; font-size: 13px; }
 
+    /* ブランド選択 */
+    .brand-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .brand-btn {
-      padding: 16px; border: 2px solid #2a2a2a; border-radius: 14px;
-      background: #161616; color: #888; font-size: 16px; font-weight: 700;
+      padding: 14px; border: 2px solid #2a2a2a; border-radius: 14px;
+      background: #161616; color: #777; font-size: 15px; font-weight: 700;
       cursor: pointer; transition: all 0.2s; font-family: inherit; text-align: center;
     }
-    .brand-btn:hover { border-color: #555; color: #ccc; }
+    .brand-btn small { display: block; font-size: 11px; font-weight: 400; margin-top: 3px; opacity: 0.6; }
     .brand-btn.active.drwu { border-color: #5b9bd5; color: #5b9bd5; background: rgba(91,155,213,0.08); }
     .brand-btn.active.moegi { border-color: #6db36d; color: #6db36d; background: rgba(109,179,109,0.08); }
-    .brand-btn small { display: block; font-size: 11px; font-weight: 400; margin-top: 4px; opacity: 0.7; }
 
-    .card { background: #161616; border: 1px solid #2a2a2a; border-radius: 16px; padding: 24px; margin-bottom: 16px; }
-    .card h2 { font-size: 15px; font-weight: 600; color: #ccc; margin-bottom: 16px; }
+    /* モード切替 */
+    .mode-toggle { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid #2a2a2a; border-radius: 12px; overflow: hidden; }
+    .mode-btn {
+      flex: 1; padding: 13px; background: #111; border: none; color: #666;
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .mode-btn:first-child { border-right: 1px solid #2a2a2a; }
+    .mode-btn.active { background: #1e1e1e; color: #f0f0f0; }
 
-    label { display: block; font-size: 13px; color: #777; margin-bottom: 6px; }
+    /* カード */
+    .card { background: #161616; border: 1px solid #2a2a2a; border-radius: 16px; padding: 22px; margin-bottom: 16px; }
+    .card h2 { font-size: 14px; font-weight: 600; color: #888; margin-bottom: 16px; }
+
+    label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
 
     input[type="text"], textarea {
       width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a;
       border-radius: 10px; color: #f0f0f0; font-size: 14px;
       padding: 11px 14px; font-family: inherit; transition: border-color 0.2s; margin-bottom: 14px;
     }
-    input[type="text"]:focus, textarea:focus { outline: none; border-color: #555; }
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: #444; }
     textarea { resize: vertical; min-height: 80px; }
 
     /* 画像アップロード */
     .upload-area {
       border: 2px dashed #2a2a2a; border-radius: 12px;
-      padding: 20px; text-align: center; cursor: pointer;
+      padding: 18px; text-align: center; cursor: pointer;
       transition: all 0.2s; margin-bottom: 14px; background: #111;
     }
-    .upload-area:hover, .upload-area.drag-over { border-color: #555; background: #161616; }
-    .upload-area p { color: #555; font-size: 13px; line-height: 1.7; }
-    .upload-area p strong { color: #888; }
-
-    .image-previews {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+    .upload-area:hover, .upload-area.drag-over { border-color: #444; }
+    .upload-area p { color: #444; font-size: 13px; line-height: 1.6; }
+    .upload-area p strong { color: #666; }
+    .image-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .preview-item { position: relative; width: 68px; height: 68px; }
+    .preview-item img { width: 68px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid #2a2a2a; }
+    .remove-btn {
+      position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+      background: #333; border: none; border-radius: 50%; color: #aaa;
+      font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
+    .remove-btn:hover { background: #555; }
 
-    .preview-item {
-      position: relative; width: 72px; height: 72px;
+    /* スライドテキスト入力（指示書モード） */
+    .slide-inputs { display: flex; flex-direction: column; gap: 12px; }
+    .slide-input-item {}
+    .slide-input-label {
+      font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px;
+      letter-spacing: 0.5px; text-transform: uppercase;
     }
-    .preview-item img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #2a2a2a; }
-    .preview-item .remove-btn {
-      position: absolute; top: -6px; right: -6px;
-      width: 20px; height: 20px; background: #333; border: none;
-      border-radius: 50%; color: #aaa; font-size: 12px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-family: inherit;
-    }
-    .preview-item .remove-btn:hover { background: #555; color: #fff; }
+    .slide-input-item textarea { margin-bottom: 0; min-height: 90px; }
 
+    /* ボタン */
     .generate-btn {
-      width: 100%; padding: 16px;
+      width: 100%; padding: 15px;
       background: linear-gradient(135deg, #3a7bd5, #2d62b8);
       border: none; border-radius: 12px; color: #fff;
-      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-size: 15px; font-weight: 700; cursor: pointer;
       transition: opacity 0.2s; margin-top: 4px; font-family: inherit;
     }
     .generate-btn.moegi-mode { background: linear-gradient(135deg, #5a9e5a, #448844); }
     .generate-btn:hover { opacity: 0.9; }
     .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .loading { display: none; text-align: center; padding: 48px 24px; color: #666; }
+    .loading { display: none; text-align: center; padding: 48px 24px; color: #555; }
     .loading.show { display: block; }
     .spinner {
-      width: 40px; height: 40px; border: 3px solid #2a2a2a;
+      width: 36px; height: 36px; border: 3px solid #222;
       border-top-color: #5b9bd5; border-radius: 50%;
-      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+      animation: spin 0.8s linear infinite; margin: 0 auto 14px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .error-box {
       display: none; background: rgba(239,68,68,0.1);
       border: 1px solid rgba(239,68,68,0.3); border-radius: 10px;
-      padding: 14px; color: #f87171; font-size: 14px; margin-top: 12px;
+      padding: 12px 14px; color: #f87171; font-size: 14px; margin-top: 12px;
     }
     .error-box.show { display: block; }
 
+    /* 結果エリア */
     .results { display: none; margin-top: 24px; }
     .results.show { display: block; }
 
-    .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab-btn {
-      flex: 1; padding: 11px 8px; background: #161616;
-      border: 1px solid #2a2a2a; border-radius: 10px; color: #777;
-      font-size: 14px; font-weight: 600; cursor: pointer;
-      transition: all 0.2s; font-family: inherit;
+    /* 表紙 */
+    .cover-box {
+      background: #161616; border: 1px solid #2a2a2a;
+      border-radius: 14px; padding: 20px 22px; margin-bottom: 14px;
     }
-    .tab-btn:hover { border-color: #555; color: #ccc; }
-    .tab-btn.active { background: rgba(91,155,213,0.1); border-color: #5b9bd5; color: #5b9bd5; }
-    .tab-btn.active.moegi-tab { background: rgba(109,179,109,0.1); border-color: #6db36d; color: #6db36d; }
-
-    .pattern-panel { display: none; }
-    .pattern-panel.active { display: block; }
-
-    .cover-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-    .cover-box h3 { font-size: 13px; color: #666; margin-bottom: 14px; }
+    .cover-label { font-size: 12px; color: #555; margin-bottom: 12px; font-weight: 600; letter-spacing: 0.5px; }
     .hook-text { font-size: 22px; font-weight: 700; color: #f0f0f0; line-height: 1.4; margin-bottom: 6px; }
-    .sub-text { font-size: 14px; color: #999; margin-bottom: 14px; }
+    .sub-text { font-size: 14px; color: #888; margin-bottom: 16px; line-height: 1.6; }
     .cover-actions { display: flex; gap: 8px; }
 
-    .slides-box { background: #161616; border: 1px solid #2a2a2a; border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-    .slides-box h3 { font-size: 13px; color: #666; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .slide-item { border: 1px solid #252525; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; background: #111; }
-    .slide-num { font-size: 11px; color: #555; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
-    .slide-title { font-size: 15px; font-weight: 700; color: #e0e0e0; margin-bottom: 8px; }
-    .slide-body { font-size: 14px; color: #bbb; line-height: 1.8; white-space: pre-wrap; }
+    /* スライドカード */
+    .slide-result {
+      background: #111; border: 1px solid #222;
+      border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+    }
+    .slide-result-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .slide-num-badge { font-size: 11px; font-weight: 700; color: #555; letter-spacing: 0.5px; }
+    .slide-result-text { font-size: 14px; color: #ccc; line-height: 1.9; white-space: pre-wrap; word-break: break-word; }
 
-    .prompt-box { background: rgba(91,155,213,0.05); border: 1px solid rgba(91,155,213,0.2); border-radius: 14px; padding: 20px 22px; margin-bottom: 14px; }
-    .prompt-box h3 { font-size: 13px; color: #5b9bd5; margin-bottom: 14px; }
-    .prompt-section { margin-bottom: 16px; }
-    .prompt-label { font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
-    .prompt-text { font-size: 13px; color: #ccc; line-height: 1.7; white-space: pre-wrap; background: #0d0d0d; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+    /* 指示書結果 */
+    .design-result { background: #161616; border: 1px solid rgba(91,155,213,0.2); border-radius: 14px; padding: 20px 22px; margin-bottom: 12px; }
+    .design-result-label { font-size: 12px; color: #5b9bd5; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .design-result-text { font-size: 13px; color: #ccc; line-height: 1.7; white-space: pre-wrap; font-family: 'Courier New', monospace; background: #0d0d0d; border-radius: 8px; padding: 14px; }
 
+    /* コピーボタン */
     .copy-btn {
-      padding: 6px 14px; background: transparent; border: 1px solid #333;
-      border-radius: 8px; color: #777; font-size: 12px; cursor: pointer;
-      transition: all 0.2s; white-space: nowrap; font-family: inherit;
+      padding: 5px 12px; background: transparent; border: 1px solid #333;
+      border-radius: 7px; color: #666; font-size: 12px; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap; font-family: inherit; flex-shrink: 0;
     }
     .copy-btn:hover { border-color: #5b9bd5; color: #5b9bd5; }
-    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
     .copy-btn.moegi:hover { border-color: #6db36d; color: #6db36d; }
+    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
+
+    .copy-all-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+
+    .mode-section { display: none; }
+    .mode-section.active { display: block; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="nav">
-      <a href="/">← Threadsジェネレーター</a>
+      <a href="/">← Threads</a>
       <a href="/newsletter.html">メルマガ</a>
     </div>
 
     <header>
-      <h1>📱 カルーセル投稿ジェネレーター</h1>
-      <p>表紙フック・スライド内容・Canva制作指示書を2パターン生成</p>
+      <h1>📱 カルーセルジェネレーター</h1>
+      <p>スライドテキスト生成 ／ Canva制作指示書変換</p>
     </header>
 
+    <!-- ブランド選択 -->
     <div class="brand-selector">
       <button class="brand-btn drwu active" id="btnDrwu" onclick="selectBrand('drwu')">
-        DR.WU
-        <small>台湾クリニカルスキンケア</small>
+        DR.WU <small>台湾クリニカルスキンケア</small>
       </button>
       <button class="brand-btn moegi" id="btnMoegi" onclick="selectBrand('moegi')">
-        MOEGI
-        <small>植物発酵エキス</small>
+        MOEGI <small>植物発酵エキス</small>
       </button>
     </div>
 
-    <div class="card">
-      <h2>📝 投稿内容を入力</h2>
-
-      <label>参考画像（商品スクショ・資料など、複数可）</label>
-      <div class="upload-area" id="uploadArea"
-        onclick="document.getElementById('fileInput').click()"
-        ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
-        <p><strong>クリックまたはドラッグ＆ドロップ</strong><br>商品スクショ・成分表・参考資料など<br>複数枚OK（PNG・JPG・WEBP）</p>
-      </div>
-      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="onFileSelect(event)">
-      <div class="image-previews" id="imagePreviews"></div>
-
-      <label>伝えたいこと・テーマ <span style="color:#f87171">*</span></label>
-      <textarea id="theme" placeholder="例：マンデリックセラム18%の商品詳細投稿。毛穴・ニキビ悩みの30代女性に向けて&#10;例：ヒアルコンプレクスの使い方投稿。乾燥肌の正しい保湿ケアの順番を教えたい&#10;例：MOEGIを使い始めてから体の内側の変化を感じた体験談ベースで紹介したい"></textarea>
-
-      <label>追加情報（強調したいポイント・お客様の声など）</label>
-      <textarea id="extra" placeholder="例：Qoo10角質ケア部門1位の実績を入れたい&#10;例：敏感肌でも使えることを強調したい" style="min-height:60px;"></textarea>
+    <!-- モード切替 -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modeTextBtn" onclick="switchMode('text')">✍️ テキスト生成</button>
+      <button class="mode-btn" id="modeDesignBtn" onclick="switchMode('design')">🎨 指示書に変換</button>
     </div>
 
-    <button class="generate-btn" id="generateBtn" onclick="generate()">✨ カルーセルを生成する（2パターン）</button>
+    <!-- テキスト生成モード -->
+    <div class="mode-section active" id="sectionText">
+      <div class="card">
+        <h2>投稿内容を入力</h2>
+
+        <label>参考画像（商品スクショ・資料など）</label>
+        <div class="upload-area" id="uploadArea"
+          onclick="document.getElementById('fileInput').click()"
+          ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+          <p><strong>クリックまたはドラッグ＆ドロップ</strong><br>商品スクショ・成分表など 複数枚OK</p>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="onFileSelect(event)">
+        <div class="image-previews" id="imagePreviews"></div>
+
+        <label>伝えたいこと・テーマ <span style="color:#f87171">*</span></label>
+        <textarea id="theme" placeholder="例：マンデリックセラム18%の商品詳細。毛穴・ニキビ悩みの30代女性向け&#10;例：ヒアルコンプレクスの使い方。乾燥肌の正しい保湿ケアの順番&#10;例：MOEGIを飲んで体の内側から変わった体験談ベースで紹介"></textarea>
+
+        <label>追加情報（強調ポイント・お客様の声など）</label>
+        <textarea id="extra" placeholder="例：Qoo10角質ケア部門1位を入れたい&#10;例：敏感肌でも使えることを強調したい" style="min-height:60px;"></textarea>
+      </div>
+
+      <button class="generate-btn" id="generateTextBtn" onclick="generateText()">✨ スライドテキストを生成する</button>
+    </div>
+
+    <!-- 指示書変換モード -->
+    <div class="mode-section" id="sectionDesign">
+      <div class="card">
+        <h2>スライドテキストを貼り付け</h2>
+        <div class="slide-inputs" id="slideInputs"></div>
+      </div>
+
+      <div class="card">
+        <label>補足情報（シリーズ・カラーイメージなど）</label>
+        <input type="text" id="colorHint" placeholder="例：マンデリックシリーズ（赤）、ミニマルでクールな雰囲気">
+      </div>
+
+      <button class="generate-btn" id="generateDesignBtn" onclick="generateDesign()">🎨 Canva制作指示書を生成する</button>
+    </div>
 
     <div class="error-box" id="errorBox"></div>
 
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <p>3パターンのスライドを生成中...<br><small style="color:#444">30〜45秒かかります</small></p>
+      <p id="loadingMsg">生成中...<br><small style="color:#333">20〜40秒かかります</small></p>
     </div>
 
     <div class="results" id="results"></div>
@@ -211,117 +242,237 @@
   <script>
     let currentBrand = 'drwu';
     let uploadedImages = [];
+    let currentMode = 'text';
+
+    // スライド入力欄を生成
+    function buildSlideInputs() {
+      const container = document.getElementById('slideInputs');
+      container.innerHTML = '';
+      const labels = ['スライド1（表紙）', 'スライド2', 'スライド3', 'スライド4', 'スライド5', 'スライド6', 'スライド7'];
+      labels.forEach((lbl, i) => {
+        const div = document.createElement('div');
+        div.className = 'slide-input-item';
+        div.innerHTML = `<div class="slide-input-label">${lbl}</div>`;
+        const ta = document.createElement('textarea');
+        ta.id = `slide${i + 1}`;
+        ta.placeholder = i === 0 ? 'フックコピー・サブコピーを貼り付け' : `スライド${i + 1}のテキストを貼り付け`;
+        div.appendChild(ta);
+        container.appendChild(div);
+      });
+    }
+    buildSlideInputs();
 
     function selectBrand(brand) {
       currentBrand = brand;
       document.getElementById('btnDrwu').className = 'brand-btn drwu' + (brand === 'drwu' ? ' active' : '');
       document.getElementById('btnMoegi').className = 'brand-btn moegi' + (brand === 'moegi' ? ' active' : '');
-      document.getElementById('generateBtn').className = 'generate-btn' + (brand === 'moegi' ? ' moegi-mode' : '');
+      const isMoegi = brand === 'moegi';
+      document.getElementById('generateTextBtn').className = 'generate-btn' + (isMoegi ? ' moegi-mode' : '');
+      document.getElementById('generateDesignBtn').className = 'generate-btn' + (isMoegi ? ' moegi-mode' : '');
     }
 
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeTextBtn').className = 'mode-btn' + (mode === 'text' ? ' active' : '');
+      document.getElementById('modeDesignBtn').className = 'mode-btn' + (mode === 'design' ? ' active' : '');
+      document.getElementById('sectionText').className = 'mode-section' + (mode === 'text' ? ' active' : '');
+      document.getElementById('sectionDesign').className = 'mode-section' + (mode === 'design' ? ' active' : '');
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('errorBox').classList.remove('show');
+    }
+
+    // 画像処理
     function onDragOver(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
-    function onDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
-    function onDrop(e) {
-      e.preventDefault();
-      document.getElementById('uploadArea').classList.remove('drag-over');
-      handleFiles(Array.from(e.dataTransfer.files));
-    }
+    function onDragLeave() { document.getElementById('uploadArea').classList.remove('drag-over'); }
+    function onDrop(e) { e.preventDefault(); document.getElementById('uploadArea').classList.remove('drag-over'); handleFiles(Array.from(e.dataTransfer.files)); }
     function onFileSelect(e) { handleFiles(Array.from(e.target.files)); e.target.value = ''; }
-
     function handleFiles(files) {
-      const imageFiles = files.filter(f => f.type.startsWith('image/'));
-      imageFiles.forEach(file => resizeAndEncode(file).then(img => {
-        uploadedImages.push(img);
-        renderPreviews();
-      }));
+      files.filter(f => f.type.startsWith('image/')).forEach(file => resizeAndEncode(file).then(img => { uploadedImages.push(img); renderPreviews(); }));
     }
-
     function resizeAndEncode(file) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           const img = new Image();
           img.onload = () => {
-            const MAX = 1024;
-            let w = img.width, h = img.height;
-            if (w > MAX || h > MAX) {
-              if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-              else { w = Math.round(w * MAX / h); h = MAX; }
-            }
+            const MAX = 1024; let w = img.width, h = img.height;
+            if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h * MAX / w); w = MAX; } else { w = Math.round(w * MAX / h); h = MAX; } }
             const canvas = document.createElement('canvas');
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-            const b64 = dataUrl.split(',')[1];
-            resolve({ base64: b64, mediaType: 'image/jpeg', dataUrl, name: file.name });
+            const b64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+            resolve({ base64: b64, mediaType: 'image/jpeg', dataUrl: canvas.toDataURL('image/jpeg', 0.85), name: file.name });
           };
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       });
     }
-
     function renderPreviews() {
       const container = document.getElementById('imagePreviews');
       container.innerHTML = '';
       uploadedImages.forEach((img, i) => {
         const item = document.createElement('div');
         item.className = 'preview-item';
-        item.innerHTML = `
-          <img src="${img.dataUrl}" alt="${img.name}">
-          <button class="remove-btn" onclick="removeImage(${i})">×</button>
-        `;
+        item.innerHTML = `<img src="${img.dataUrl}"><button class="remove-btn" onclick="removeImage(${i})">×</button>`;
         container.appendChild(item);
       });
     }
+    function removeImage(i) { uploadedImages.splice(i, 1); renderPreviews(); }
 
-    function removeImage(i) {
-      uploadedImages.splice(i, 1);
-      renderPreviews();
-    }
-
-    async function generate() {
-      const errorBox = document.getElementById('errorBox');
-      const loading = document.getElementById('loading');
-      const results = document.getElementById('results');
-      const btn = document.getElementById('generateBtn');
-
-      errorBox.classList.remove('show');
-      results.classList.remove('show');
-      results.innerHTML = '';
-
+    // テキスト生成
+    async function generateText() {
       const theme = document.getElementById('theme').value.trim();
-      if (!theme) {
-        errorBox.textContent = 'テーマ・伝えたいことを入力してください';
-        errorBox.classList.add('show');
-        return;
-      }
-
-      btn.disabled = true;
-      loading.classList.add('show');
-
+      if (!theme) { showError('テーマを入力してください'); return; }
+      document.getElementById('loadingMsg').innerHTML = 'スライドテキストを生成中...<br><small style="color:#333">20〜40秒かかります</small>';
+      startLoading('generateTextBtn');
       try {
         const res = await fetch('/api/carousel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            brand: currentBrand,
-            theme,
+            brand: currentBrand, theme,
             extra: document.getElementById('extra').value.trim(),
             images: uploadedImages.map(({ base64, mediaType }) => ({ base64, mediaType })),
           }),
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '生成に失敗しました');
-        renderResults(data.result);
-      } catch (err) {
-        errorBox.textContent = `エラー: ${err.message}`;
-        errorBox.classList.add('show');
-      } finally {
-        btn.disabled = false;
-        loading.classList.remove('show');
+        renderTextResults(data.result);
+      } catch (err) { showError(err.message); }
+      finally { stopLoading('generateTextBtn'); }
+    }
+
+    // 指示書変換
+    async function generateDesign() {
+      const slides = [];
+      for (let i = 1; i <= 7; i++) {
+        slides.push((document.getElementById(`slide${i}`)?.value || '').trim());
       }
+      if (slides.every(s => !s)) { showError('スライドテキストを入力してください'); return; }
+      document.getElementById('loadingMsg').innerHTML = 'Canva制作指示書を生成中...<br><small style="color:#333">20〜40秒かかります</small>';
+      startLoading('generateDesignBtn');
+      try {
+        const res = await fetch('/api/carousel-design', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            brand: currentBrand, slides,
+            colorHint: document.getElementById('colorHint').value.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '生成に失敗しました');
+        renderDesignResults(data.result);
+      } catch (err) { showError(err.message); }
+      finally { stopLoading('generateDesignBtn'); }
+    }
+
+    function startLoading(btnId) {
+      document.getElementById(btnId).disabled = true;
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('errorBox').classList.remove('show');
+    }
+    function stopLoading(btnId) {
+      document.getElementById(btnId).disabled = false;
+      document.getElementById('loading').classList.remove('show');
+    }
+    function showError(msg) {
+      const box = document.getElementById('errorBox');
+      box.textContent = `エラー: ${msg}`;
+      box.classList.add('show');
+    }
+
+    // テキスト生成結果のレンダリング
+    function renderTextResults(text) {
+      const results = document.getElementById('results');
+      const isMoegi = currentBrand === 'moegi';
+      const accentColor = isMoegi ? '#6db36d' : '#5b9bd5';
+
+      // 表紙パース
+      const coverRaw = parseSection(text, '表紙');
+      const hookMatch = coverRaw.match(/フックコピー[：:]\s*\*{0,2}(.+?)\*{0,2}$/m);
+      const subMatch = coverRaw.match(/サブコピー[：:]\s*\*{0,2}(.+?)\*{0,2}$/m);
+      const hook = hookMatch ? hookMatch[1].trim() : coverRaw.replace(/\*\*/g, '').trim();
+      const sub = subMatch ? subMatch[1].trim() : '';
+
+      // 表紙カード
+      const coverBox = document.createElement('div');
+      coverBox.className = 'cover-box';
+      coverBox.innerHTML = `<div class="cover-label">SLIDE 1 / 表紙</div>
+        <div class="hook-text">${esc(hook)}</div>
+        <div class="sub-text">${esc(sub)}</div>`;
+      const actions = document.createElement('div');
+      actions.className = 'cover-actions';
+      [['フックコピー', hook], ['サブコピー', sub]].forEach(([label, val]) => {
+        const btn = makeCopyBtn(label, val, isMoegi);
+        actions.appendChild(btn);
+      });
+      coverBox.appendChild(actions);
+      results.appendChild(coverBox);
+
+      // スライド2〜7
+      const copyAllTexts = [`【スライド1】\n${hook}\n${sub}`];
+      for (let i = 2; i <= 7; i++) {
+        const slideText = parseSection(text, `スライド${i}`);
+        if (!slideText) continue;
+        copyAllTexts.push(`【スライド${i}】\n${slideText}`);
+        const card = document.createElement('div');
+        card.className = 'slide-result';
+        const header = document.createElement('div');
+        header.className = 'slide-result-header';
+        const badge = document.createElement('div');
+        badge.className = 'slide-num-badge';
+        badge.textContent = `SLIDE ${i}`;
+        const copyBtn = makeCopyBtn('コピー', slideText, isMoegi);
+        header.appendChild(badge);
+        header.appendChild(copyBtn);
+        const textEl = document.createElement('div');
+        textEl.className = 'slide-result-text';
+        textEl.textContent = slideText;
+        card.appendChild(header);
+        card.appendChild(textEl);
+        results.appendChild(card);
+      }
+
+      // 全コピーボタン
+      const allRow = document.createElement('div');
+      allRow.className = 'copy-all-row';
+      const allBtn = makeCopyBtn('📋 全スライドまとめてコピー', copyAllTexts.join('\n\n'), isMoegi);
+      allBtn.style.padding = '8px 16px';
+      allRow.appendChild(allBtn);
+      results.insertBefore(allRow, results.firstChild);
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // 指示書結果のレンダリング
+    function renderDesignResults(text) {
+      const results = document.getElementById('results');
+      const isMoegi = currentBrand === 'moegi';
+
+      for (let i = 1; i <= 7; i++) {
+        const sectionText = parseSection(text, `スライド${i}`);
+        if (!sectionText) continue;
+        const card = document.createElement('div');
+        card.className = 'design-result';
+        const label = document.createElement('div');
+        label.className = 'design-result-label';
+        label.innerHTML = `<span>SLIDE ${i}${i === 1 ? ' / 表紙' : ''}</span>`;
+        const copyBtn = makeCopyBtn('コピー', sectionText, isMoegi);
+        label.appendChild(copyBtn);
+        const textEl = document.createElement('div');
+        textEl.className = 'design-result-text';
+        textEl.textContent = sectionText;
+        card.appendChild(label);
+        card.appendChild(textEl);
+        results.appendChild(card);
+      }
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function parseSection(text, name) {
@@ -331,163 +482,19 @@
       return m ? m[1].trim() : '';
     }
 
-    function parseSlides(slidesText) {
-      const slides = [];
-      const blocks = slidesText.split(/(?=【スライド\d+】)/);
-      for (const block of blocks) {
-        if (!block.trim()) continue;
-        const titleMatch = block.match(/【スライド(\d+)】タイトル[：:]\s*(.+)/);
-        const bodyMatch = block.match(/本文[：:]\s*([\s\S]+)/);
-        if (titleMatch) {
-          slides.push({
-            num: titleMatch[1],
-            title: titleMatch[2].trim(),
-            body: bodyMatch ? bodyMatch[1].trim() : '',
-          });
-        }
-      }
-      return slides;
-    }
-
-    function parseDesignPrompt(promptText) {
-      const coverMatch = promptText.match(/【表紙】\s*([\s\S]*?)(?=【スライド|$)/);
-      const slideMatch = promptText.match(/(【スライド[\s\S]*?)$/);
-      return {
-        cover: coverMatch ? coverMatch[1].trim() : '',
-        slide: slideMatch ? slideMatch[1].trim() : '',
-      };
-    }
-
-    function parseCover(coverText) {
-      const hookMatch = coverText.match(/フックコピー[：:]\s*(.+)/);
-      const subMatch = coverText.match(/サブコピー[：:]\s*(.+)/);
-      return {
-        hook: hookMatch ? hookMatch[1].trim() : coverText,
-        sub: subMatch ? subMatch[1].trim() : '',
-      };
-    }
-
-    function renderResults(text) {
-      const results = document.getElementById('results');
-      const isMoegi = currentBrand === 'moegi';
-      const tabBar = document.createElement('div');
-      tabBar.className = 'tab-bar';
-      const panels = [];
-
-      for (let i = 1; i <= 2; i++) {
-        const coverText = parseSection(text, `パターン${i}表紙`);
-        const slidesText = parseSection(text, `パターン${i}スライド`);
-        const promptText = parseSection(text, `パターン${i}制作指示`);
-        const cover = parseCover(coverText);
-        const slides = parseSlides(slidesText);
-        const design = parseDesignPrompt(promptText);
-
-        const tabBtn = document.createElement('button');
-        tabBtn.className = 'tab-btn' + (i === 1 ? ' active' + (isMoegi ? ' moegi-tab' : '') : '');
-        tabBtn.textContent = `パターン${i}`;
-        const idx = i - 1;
-        tabBtn.addEventListener('click', () => {
-          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'moegi-tab'));
-          document.querySelectorAll('.pattern-panel').forEach(p => p.classList.remove('active'));
-          tabBtn.classList.add('active');
-          if (isMoegi) tabBtn.classList.add('moegi-tab');
-          panels[idx].classList.add('active');
+    function makeCopyBtn(label, val, isMoegi) {
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(val).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = '✓ コピー済み';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
         });
-        tabBar.appendChild(tabBtn);
-
-        const panel = document.createElement('div');
-        panel.className = 'pattern-panel' + (i === 1 ? ' active' : '');
-
-        // 表紙
-        const coverBox = document.createElement('div');
-        coverBox.className = 'cover-box';
-        coverBox.innerHTML = '<h3>🖼 表紙コピー</h3>';
-        const hookEl = document.createElement('div');
-        hookEl.className = 'hook-text';
-        hookEl.textContent = cover.hook;
-        const subEl = document.createElement('div');
-        subEl.className = 'sub-text';
-        subEl.textContent = cover.sub;
-        const actions = document.createElement('div');
-        actions.className = 'cover-actions';
-        [['フックコピー', cover.hook], ['サブコピー', cover.sub]].forEach(([label, val]) => {
-          const btn = document.createElement('button');
-          btn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-          btn.textContent = label;
-          btn.addEventListener('click', () => copyText(btn, val));
-          actions.appendChild(btn);
-        });
-        coverBox.appendChild(hookEl);
-        coverBox.appendChild(subEl);
-        coverBox.appendChild(actions);
-        panel.appendChild(coverBox);
-
-        // スライド
-        if (slides.length > 0) {
-          const slidesBox = document.createElement('div');
-          slidesBox.className = 'slides-box';
-          const h3 = document.createElement('h3');
-          h3.textContent = '📄 スライド内容';
-          const copyAllBtn = document.createElement('button');
-          copyAllBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-          copyAllBtn.textContent = '全スライドコピー';
-          const allText = slides.map(s => `【スライド${s.num}】${s.title}\n${s.body}`).join('\n\n');
-          copyAllBtn.addEventListener('click', () => copyText(copyAllBtn, allText));
-          h3.appendChild(copyAllBtn);
-          slidesBox.appendChild(h3);
-          slides.forEach(slide => {
-            const item = document.createElement('div');
-            item.className = 'slide-item';
-            item.innerHTML = `<div class="slide-num">SLIDE ${slide.num}</div><div class="slide-title">${esc(slide.title)}</div><div class="slide-body">${esc(slide.body)}</div>`;
-            slidesBox.appendChild(item);
-          });
-          panel.appendChild(slidesBox);
-        }
-
-        // デザインプロンプト
-        if (design.cover || design.slide) {
-          const promptBox = document.createElement('div');
-          promptBox.className = 'prompt-box';
-          promptBox.innerHTML = '<h3>🎨 Canva制作指示書</h3>';
-          [['表紙', design.cover], ['スライド構成メモ', design.slide]].forEach(([label, val]) => {
-            if (!val) return;
-            const sec = document.createElement('div');
-            sec.className = 'prompt-section';
-            const labelEl = document.createElement('div');
-            labelEl.className = 'prompt-label';
-            labelEl.textContent = label;
-            const textEl = document.createElement('div');
-            textEl.className = 'prompt-text';
-            textEl.textContent = val;
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn' + (isMoegi ? ' moegi' : '');
-            copyBtn.textContent = 'コピー';
-            copyBtn.addEventListener('click', () => copyText(copyBtn, val));
-            sec.appendChild(labelEl);
-            sec.appendChild(textEl);
-            sec.appendChild(copyBtn);
-            promptBox.appendChild(sec);
-          });
-          panel.appendChild(promptBox);
-        }
-
-        panels.push(panel);
-      }
-
-      results.appendChild(tabBar);
-      panels.forEach(p => results.appendChild(p));
-      results.classList.add('show');
-      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function copyText(btn, text) {
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => {
-        const orig = btn.textContent;
-        btn.textContent = '✓ コピー済み';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
       });
+      return btn;
     }
 
     function esc(s) {
